@@ -30,6 +30,8 @@ import useClustersPreview from '@hooks/useClustersPreview';
 import { useErrorContext } from '@hooks/useErrorContext';
 import { GeneralColumn } from '@utils/convertDependencies';
 import { PrimitiveType, SpecificTaskType } from 'types/globalTypes';
+import { useReportsRouter } from '@components/useReportsRouter';
+
 
 export type DepAttribute = {
   column: Column;
@@ -60,8 +62,7 @@ export const TaskContextProvider: FC<PropsWithChildren> = ({ children }) => {
   const [selectedDependency, selectDependency] = useState<GeneralColumn[]>([]);
   const [errorDependency, setErrorDependecy] = useState<GeneralColumn[]>([]);
   const [specificTaskID, setSpecificTaskID] = useState<string | undefined>();
-  const router = useRouter();
-  const taskID = router.query.taskID as string;
+  const { taskID } = useReportsRouter();
 
   const { showError } = useErrorContext();
   const { data: taskInfo } = useQuery<getTaskInfo, getTaskInfoVariables>(

@@ -24,10 +24,8 @@ const Loader: FC = () => {
     ) {
       setTimeout(() => {
         void router.push({
-          pathname: primitivePathnames[type as PrimitiveType],
-          query: {
-            taskID: data.taskID,
-          },
+          pathname: `/reports/${data.taskID}/charts`,
+          query: {},
         });
       }, 500);
     }

@@ -10,6 +10,8 @@ import { useTaskContext } from '@components/TaskContext';
 import useTaskState from '@hooks/useTaskState';
 import { PrimitiveType } from 'types/globalTypes';
 import styles from './ReportsLayout.module.scss';
+import { useReportsRouter } from '@components/useReportsRouter';
+
 
 interface Props extends PropsWithChildren {
   pageClass?: string;
@@ -18,27 +20,27 @@ interface Props extends PropsWithChildren {
 
 const menuStatistics = {
   label: 'Statistics',
-  pathname: '/reports/charts',
+  pathname: 'charts',
   icon: <ChartIcon />,
 };
 const menuClusters = {
   label: 'Clusters',
-  pathname: '/reports/clusters',
+  pathname: 'clusters',
   icon: <ClusterIcon />,
 };
 const menuPrimitiveList = {
   label: 'Primitive list',
-  pathname: '/reports/dependencies',
+  pathname: 'dependencies',
   icon: <DropDownIcon />,
 };
 const menuDatasetSnippet = {
   label: 'Dataset snippet',
-  pathname: '/reports/snippet',
+  pathname: 'snippet',
   icon: <DatatableIcon />,
 };
 const menuMFDClusters = {
   label: 'Clusters',
-  pathname: '/reports/metric-dependencies',
+  pathname: 'metric-dependencies',
   icon: <ClusterIcon />,
 };
 
@@ -60,7 +62,7 @@ export const ReportsLayout: FC<Props> = ({
   containerClass,
   children,
 }) => {
-  const router = useRouter();
+  const { taskID, currentTab, switchTab } = useReportsRouter();
   const { data } = useTaskState();
   const type = data.type as PrimitiveType;
 
@@ -80,14 +82,9 @@ export const ReportsLayout: FC<Props> = ({
               <li
                 key={pathname}
                 className={classNames(
-                  router.pathname === pathname && styles.active
+                  currentTab === pathname && styles.active
                 )}
-                onClick={() =>
-                  router.push({
-                    pathname,
-                    query: router.query,
-                  })
-                }
+                onClick={() => switchTab(pathname)}
               >
                 {icon}
                 <p>{label}</p>

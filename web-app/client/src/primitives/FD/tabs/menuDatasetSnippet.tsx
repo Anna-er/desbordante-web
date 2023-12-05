@@ -13,10 +13,11 @@ import {
 import { GET_DATASET } from '@graphql/operations/queries/getDataset';
 import styles from '@styles/Snippet.module.scss';
 import { NextPageWithLayout } from 'types/pageWithLayout';
+import { useReportsRouter } from '@components/useReportsRouter';
 
 type Snippet = getDataset_taskInfo_dataset_snippet;
 
-interface Props {
+type Props = {
   snippet: Snippet;
 }
 
@@ -60,7 +61,7 @@ const ReportsSnippet: NextPageWithLayout<Props> = ({ snippet }) => {
       <h5 className={styles.header}>Dataset Snippet</h5>
       <ScrollableTable
         className={styles.table}
-        header={snippet.header}
+        header={snippet.header ? snippet.header : undefined}
         data={rows}
         highlightColumnIndices={highlightedColumnIndices}
         onScroll={handleScrollToBottom}
@@ -82,7 +83,8 @@ ReportsSnippet.getLayout = function getLayout(page: ReactElement) {
 export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
-  const taskID = context.query.taskID;
+  const { taskID } = useReportsRouter();
+  console.log(taskID);
   if (!taskID || typeof taskID !== 'string') {
     return {
       notFound: true,
