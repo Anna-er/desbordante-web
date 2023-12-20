@@ -72,11 +72,9 @@ const ReportsSnippet: NextPageWithLayout<Props> = ({ snippet }) => {
 
 ReportsSnippet.getLayout = function getLayout(page: ReactElement) {
   return (
-    <TaskContextProvider>
       <ReportsLayout pageClass={styles.page} containerClass={styles.container}>
         {page}
       </ReportsLayout>
-    </TaskContextProvider>
   );
 };
 
@@ -84,7 +82,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async (
   context
 ) => {
   const { taskID } = useReportsRouter();
-  console.log(taskID);
   if (!taskID || typeof taskID !== 'string') {
     return {
       notFound: true,

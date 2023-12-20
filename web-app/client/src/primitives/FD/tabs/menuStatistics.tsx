@@ -63,9 +63,7 @@ const ReportsCharts: NextPageWithLayout = () => {
 
 ReportsCharts.getLayout = function getLayout(page: ReactElement) {
   return (
-    <TaskContextProvider>
       <ReportsLayout>{page}</ReportsLayout>
-    </TaskContextProvider>
   );
 };
 

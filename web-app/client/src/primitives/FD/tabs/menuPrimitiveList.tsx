@@ -227,9 +227,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 ReportsDependencies.getLayout = function getLayout(page: ReactElement) {
   return (
-    <TaskContextProvider>
       <ReportsLayout>{page}</ReportsLayout>
-    </TaskContextProvider>
   );
 };
 
