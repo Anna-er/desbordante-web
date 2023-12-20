@@ -7,8 +7,8 @@ export const useReportsRouter = () => {
 
   const switchTab = (tab: string) => {
     router.push({
-      pathname: router.pathname,
-      query: { ...router.query, tab },
+      pathname: router.pathname.replace(currentTab, tab),
+      query: { ...router.query, tab},
     });
   };
 
