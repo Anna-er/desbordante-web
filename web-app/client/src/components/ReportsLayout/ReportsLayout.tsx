@@ -11,6 +11,8 @@ import useTaskState from '@hooks/useTaskState';
 import { PrimitiveType } from 'types/globalTypes';
 import styles from './ReportsLayout.module.scss';
 import { useReportsRouter } from '@components/useReportsRouter';
+import reportsConfig from '../../primitives/reportsConfig';
+
 
 
 interface Props extends PropsWithChildren {
@@ -18,44 +20,6 @@ interface Props extends PropsWithChildren {
   containerClass?: string;
 }
 
-const menuStatistics = {
-  label: 'Statistics',
-  pathname: 'charts',
-  icon: <ChartIcon />,
-};
-const menuClusters = {
-  label: 'Clusters',
-  pathname: 'clusters',
-  icon: <ClusterIcon />,
-};
-const menuPrimitiveList = {
-  label: 'Primitive list',
-  pathname: 'dependencies',
-  icon: <DropDownIcon />,
-};
-const menuDatasetSnippet = {
-  label: 'Dataset snippet',
-  pathname: 'snippet',
-  icon: <DatatableIcon />,
-};
-const menuMFDClusters = {
-  label: 'Clusters',
-  pathname: 'metric-dependencies',
-  icon: <ClusterIcon />,
-};
-
-export const reportsTabs: Record<
-  PrimitiveType,
-  { label: string; pathname: string; icon: any }[]
-> = {
-  [PrimitiveType.TypoCluster]: [],
-  [PrimitiveType.FD]: [menuStatistics, menuPrimitiveList, menuDatasetSnippet],
-  [PrimitiveType.CFD]: [menuStatistics, menuPrimitiveList, menuDatasetSnippet],
-  [PrimitiveType.AR]: [menuPrimitiveList, menuDatasetSnippet],
-  [PrimitiveType.TypoFD]: [menuPrimitiveList, menuClusters, menuDatasetSnippet],
-  [PrimitiveType.MFD]: [menuMFDClusters],
-  [PrimitiveType.Stats]: [],
-};
 
 export const ReportsLayout: FC<Props> = ({
   pageClass,
@@ -78,13 +42,13 @@ export const ReportsLayout: FC<Props> = ({
         <ul>
           {type &&
             // primitive
-            reportsTabs[type].map(({ icon, label, pathname }) => (
+            reportsConfig[type].tabs.map(({ icon, label, pathName }) => (
               <li
-                key={pathname}
+                key={pathName}
                 className={classNames(
-                  currentTab === pathname && styles.active
+                  currentTab === pathName && styles.active
                 )}
-                onClick={() => switchTab(pathname)}
+                onClick={() => switchTab(pathName)}
               >
                 {icon}
                 <p>{label}</p>

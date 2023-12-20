@@ -2,11 +2,11 @@ import cn from 'classnames';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { FC, useEffect } from 'react';
-import { primitivePathnames } from '@constants/primitiveReportPathnames';
 import useTaskState from '@hooks/useTaskState';
 import getTaskStatusData from '@utils/getTaskStatusData';
 import { PrimitiveType } from 'types/globalTypes';
 import styles from './Loader.module.scss';
+import reportsConfig from '../../primitives/reportsConfig';
 
 const Loader: FC = () => {
   const router = useRouter();
@@ -24,7 +24,7 @@ const Loader: FC = () => {
     ) {
       setTimeout(() => {
         void router.push({
-          pathname: `/reports/${data.taskID}/charts`,
+          pathname: `/reports/${data.taskID}/${reportsConfig[type as PrimitiveType]?.tabs[0].pathName}`,
           query: {},
         });
       }, 500);
