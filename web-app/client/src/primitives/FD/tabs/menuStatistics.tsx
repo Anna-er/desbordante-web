@@ -1,8 +1,6 @@
 import { useQuery } from '@apollo/client';
-import { ReactElement } from 'react';
 import LayeredChart from '@components/Chart/LayeredChart';
-import { ReportsLayout } from '@components/ReportsLayout/ReportsLayout';
-import { TaskContextProvider, useTaskContext } from '@components/TaskContext';
+import { useTaskContext } from '@components/TaskContext';
 import {
   getPieChartData,
   getPieChartDataVariables,
@@ -58,12 +56,6 @@ const ReportsCharts: NextPageWithLayout = () => {
         }}
       />
     </div>
-  );
-};
-
-ReportsCharts.getLayout = function getLayout(page: ReactElement) {
-  return (
-      <ReportsLayout>{page}</ReportsLayout>
   );
 };
 

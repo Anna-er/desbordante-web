@@ -1,6 +1,5 @@
-import { useLazyQuery } from '@apollo/client';
-import type { GetServerSideProps } from 'next';
-import { ReactElement, useEffect, useMemo, useState } from 'react';
+import { useLazyQuery, useQuery } from '@apollo/client';
+import { useEffect, useMemo, useState } from 'react';
 import { FormProvider } from 'react-hook-form';
 import EyeIcon from '@assets/icons/eye.svg?component';
 import FilterIcon from '@assets/icons/filter.svg?component';
@@ -16,26 +15,18 @@ import {
 } from '@components/Filters';
 import { Text } from '@components/Inputs';
 import Pagination from '@components/Pagination/Pagination';
-import ReportsLayout from '@components/ReportsLayout';
-import { TaskContextProvider, useTaskContext } from '@components/TaskContext';
-import client from '@graphql/client';
+import { useTaskContext } from '@components/TaskContext';
 import {
   GetMainTaskDeps,
   GetMainTaskDepsVariables,
 } from '@graphql/operations/queries/__generated__/GetMainTaskDeps';
-import { getTaskInfo } from '@graphql/operations/queries/__generated__/getTaskInfo';
 import { GET_MAIN_TASK_DEPS } from '@graphql/operations/queries/getDeps';
-import { GET_TASK_INFO } from '@graphql/operations/queries/getTaskInfo';
 import styles from '@styles/Dependencies.module.scss';
 import { convertDependencies } from '@utils/convertDependencies';
 import { IntersectionFilter, OrderBy, PrimitiveType } from 'types/globalTypes';
 import { NextPageWithLayout } from 'types/pageWithLayout';
 
-type Props = {
-  defaultData?: GetMainTaskDeps;
-};
-
-const ReportsDependencies: NextPageWithLayout<Props> = ({ defaultData }) => {
+const ReportsDependencies: NextPageWithLayout = () => {
   const {
     taskInfo,
     taskID,
@@ -44,6 +35,26 @@ const ReportsDependencies: NextPageWithLayout<Props> = ({ defaultData }) => {
       lhs: mustContainLhsColIndices,
     },
   } = useTaskContext();
+
+  const primitiveType = taskInfo?.taskInfo.data.baseConfig.type;
+  const defaultData = undefined;
+  if (primitiveType) {
+    const sortingParams = getSortingParams(primitiveType);
+
+    const { data: defaultData } = useQuery<GetMainTaskDeps>(GET_MAIN_TASK_DEPS, {
+      variables: {
+        taskID: taskID,
+        filter: {
+          withoutKeys: false,
+          filterString: '',
+          pagination: { limit: 10, offset: 0 },
+          ...sortingParams,
+          orderBy: OrderBy.ASC,
+        },
+      },
+    });
+  }
+
 
   const primitive: PrimitiveType | undefined =
     taskInfo?.taskInfo.data.baseConfig.type;
@@ -62,7 +73,7 @@ const ReportsDependencies: NextPageWithLayout<Props> = ({ defaultData }) => {
   const filter = useMemo<IntersectionFilter>(() => {
     const sortingParams = {
       [(primitive === PrimitiveType.TypoFD ? PrimitiveType.FD : primitive) +
-      'SortBy']: ordering,
+        'SortBy']: ordering,
     };
 
     return {
@@ -191,44 +202,5 @@ const ReportsDependencies: NextPageWithLayout<Props> = ({ defaultData }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  if (context.query.taskID) {
-    const { data } = await client.query<getTaskInfo>({
-      query: GET_TASK_INFO,
-      variables: { taskID: context.query.taskID },
-    });
-
-    const sortingParams = getSortingParams(data.taskInfo.data.baseConfig.type);
-
-    const { data: taskDeps } = await client.query<GetMainTaskDeps>({
-      query: GET_MAIN_TASK_DEPS,
-      variables: {
-        taskID: context.query.taskID,
-        filter: {
-          withoutKeys: false,
-          filterString: '',
-          pagination: { limit: 10, offset: 0 },
-          ...sortingParams,
-          orderBy: OrderBy.ASC,
-        },
-      },
-    });
-    return {
-      props: {
-        defaultData: taskDeps,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};
-
-ReportsDependencies.getLayout = function getLayout(page: ReactElement) {
-  return (
-      <ReportsLayout>{page}</ReportsLayout>
-  );
-};
 
 export default ReportsDependencies;

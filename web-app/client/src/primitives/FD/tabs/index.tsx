@@ -1,6 +1,4 @@
-import { ComponentType } from 'react';
 import ChartIcon from '@assets/icons/chart.svg?component';
-import ClusterIcon from '@assets/icons/cluster.svg?component';
 import DatatableIcon from '@assets/icons/datatable.svg?component';
 import DropDownIcon from '@assets/icons/list-dropdown.svg?component';
 import dynamic from 'next/dynamic';
@@ -8,24 +6,17 @@ import dynamic from 'next/dynamic';
 const DatasetSnippetComponent = dynamic(() => import('../../../primitives/FD/tabs/menuDatasetSnippet'), {
   ssr: false,
 });
-const PrimitiveListComponent = dynamic(() => import('../../../primitives/FD/tabs/menuPrimitiveList'), {
+const InstanceListComponent = dynamic(() => import('../../../primitives/FD/tabs/menuInstanceList'), {
   ssr: false,
 });
 const StatisticsComponent = dynamic(() => import('../../../primitives/FD/tabs/menuStatistics'), {
   ssr: false,
 });
+
+
 import { TabConfig } from '../../reportsConfig';
 
-import React, { FC } from 'react';
-
-// const MyComponent: FC = () => {
-//   return (
-//     <div>
-//       <h1>Hello, World!</h1>
-//       <p>This is a functional component without props.</p>
-//     </div>
-//   );
-// };
+import React from 'react';
 
 const menuStatistics: TabConfig = {
   pathName: 'charts',
@@ -33,11 +24,11 @@ const menuStatistics: TabConfig = {
   icon: <ChartIcon />,
   component: StatisticsComponent,
 };
-const menuPrimitiveList: TabConfig = {
+const menuInstanceList: TabConfig = {
   pathName: 'dependencies',
-  label: 'Primitive list',
+  label: 'Instance list',
   icon: <DropDownIcon />,
-  component: PrimitiveListComponent,
+  component: InstanceListComponent,
 };
 const menuDatasetSnippet: TabConfig = {
   pathName: 'snippet',
@@ -46,4 +37,4 @@ const menuDatasetSnippet: TabConfig = {
   component: DatasetSnippetComponent,
 };
 
-export const FDtabs: TabConfig[] = [menuStatistics, menuPrimitiveList, menuDatasetSnippet];
+export const FDtabs: TabConfig[] = [menuStatistics, menuInstanceList, menuDatasetSnippet];
