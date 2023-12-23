@@ -1,12 +1,6 @@
 import classNames from 'classnames';
-import { useRouter } from 'next/router';
 import React, { FC, PropsWithChildren } from 'react';
 import Background from '@assets/backgrounds/reports.svg?component';
-import ChartIcon from '@assets/icons/chart.svg?component';
-import ClusterIcon from '@assets/icons/cluster.svg?component';
-import DatatableIcon from '@assets/icons/datatable.svg?component';
-import DropDownIcon from '@assets/icons/list-dropdown.svg?component';
-import { useTaskContext } from '@components/TaskContext';
 import useTaskState from '@hooks/useTaskState';
 import { PrimitiveType } from 'types/globalTypes';
 import styles from './ReportsLayout.module.scss';
@@ -30,6 +24,8 @@ export const ReportsLayout: FC<Props> = ({
   const { data } = useTaskState();
   const type = data.type as PrimitiveType;
 
+  pageClass = (currentTab == 'snippet') ? pageClass : undefined;
+  containerClass = (currentTab == 'snippet') ? containerClass : undefined;
   return (
     <div className={classNames(styles.page, pageClass)}>
       <Background
@@ -41,7 +37,6 @@ export const ReportsLayout: FC<Props> = ({
       <div className={styles.menu}>
         <ul>
           {type &&
-            // primitive
             reportsConfig[type].tabs.map(({ icon, label, pathName }) => (
               <li
                 key={pathName}
