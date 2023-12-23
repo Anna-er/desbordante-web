@@ -55,6 +55,8 @@ import {
   Presets,
 } from 'types/form';
 import { IntersectionMainTaskProps } from 'types/globalTypes';
+import { PrimitiveType } from 'types/globalTypes';
+import reportsConfig from '../../primitives/reportsConfig';
 
 type FormFactoryProps<T extends UsedPrimitivesType> = {
   fileID: string;
@@ -254,10 +256,8 @@ const useFormFactory = <T extends UsedPrimitivesType>({
       })
         .then((resp) =>
           router.push({
-            pathname: '/reports',
-            query: {
-              taskID: resp.data?.createMainTaskWithDatasetChoosing.taskID,
-            },
+            pathname: `/reports/${resp.data?.createMainTaskWithDatasetChoosing.taskID}/${reportsConfig[primitive as unknown as PrimitiveType]?.tabs[0].pathName}`,
+            query: {},
           })
         )
         .catch((error) => {
