@@ -12,7 +12,7 @@ const Loader: FC = () => {
   const router = useRouter();
   const { data, error } = useTaskState();
   const status = getTaskStatusData(error, data.state);
-
+  
   useEffect(() => {
     const { state, type } = data;
 
