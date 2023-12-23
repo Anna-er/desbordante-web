@@ -1,23 +1,28 @@
 import { PrimitiveType } from 'types/globalTypes';
 import { FDtabs } from './FD';
+import { MFDtabs } from './MFD';
+import { CFDtabs } from './CFD';
+import { ARtabs } from './AR';
+import { TypoFDtabs } from './TypoFD';
+
+
 
 import { ComponentType } from 'react';
 
-import {FC, ReactElement} from "react";
+import {ReactElement} from "react";
 
-  
-  
+
+
 
 export type TabConfig = {
   pathName: string;
   label: string;
   icon: ReactElement;
-  component: ComponentType<any>;
+  component: ComponentType;
 };
-  
+
 
 type PrimitiveReportConfig = {
-  store: any;
   tabs: TabConfig[];
 }
 
@@ -27,32 +32,25 @@ type ReportConfig = Record<PrimitiveType, PrimitiveReportConfig>;
 
 const reportsConfig: ReportConfig = {
     FD: {
-      store: "щишка",
       tabs: FDtabs
     },
     AR: {
-      store: "any",
-      tabs: FDtabs
+      tabs: ARtabs
     },
     CFD: {
-      store: "any",
-      tabs: FDtabs
+      tabs: CFDtabs
     },
     MFD: {
-      store: "any",
-      tabs: FDtabs
+      tabs: MFDtabs
     },
     TypoFD: {
-      store: "any",
-      tabs: FDtabs
+      tabs: TypoFDtabs
     },
     Stats: {
-      store: "any",
-      tabs: FDtabs
+      tabs: []
     },
     TypoCluster: {
-      store: "any",
-      tabs: FDtabs
+      tabs: []
     }
 }
 export default reportsConfig;
