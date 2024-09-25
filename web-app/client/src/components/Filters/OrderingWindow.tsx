@@ -4,7 +4,7 @@ import { useForm, useFormContext } from 'react-hook-form';
 import { ControlledSelect } from '@components/Inputs/Select';
 import ListPropertiesModal from '@components/ListPropertiesModal';
 import { OrderingTitles } from '@constants/titles';
-import { OrderBy, PrimitiveType } from 'types/globalTypes';
+import { OrderDirection, PrimitiveType } from 'types/globalTypes';
 import { FiltersFields } from './Filters';
 
 type OrderingProps = {
@@ -32,12 +32,12 @@ export const OrderingWindow: FC<OrderingProps> = ({
     (k: string, v: string) => ({
       label: k,
       value: v,
-    })
+    }),
   );
 
   const directionOptions = {
-    [OrderBy.ASC]: { value: OrderBy.ASC, label: 'Ascending' },
-    [OrderBy.DESC]: { value: OrderBy.DESC, label: 'Descending' },
+    [OrderDirection.ASC]: { value: OrderDirection.ASC, label: 'Ascending' },
+    [OrderDirection.DESC]: { value: OrderDirection.DESC, label: 'Descending' },
   };
 
   return (

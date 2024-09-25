@@ -6,6 +6,7 @@ import { useTaskContext } from '@components/TaskContext';
 import {
   getSpecificCluster,
   getSpecificClusterVariables,
+  getSpecificCluster_taskInfo_data_SpecificTaskData_result_specificCluster_SquashedCluster_items,
 } from '@graphql/operations/queries/EDP/__generated__/getSpecificCluster';
 import { GET_SPECIFIC_CLUSTER } from '@graphql/operations/queries/EDP/getSpecificCluster';
 import { useErrorContext } from '@hooks/useErrorContext';
@@ -43,7 +44,7 @@ const ClusterTable: FC<ClusterTableProps> = ({
     GET_SPECIFIC_CLUSTER,
     {
       fetchPolicy: 'network-only',
-    }
+    },
   );
   const pageCompleted =
     pageResult?.taskInfo.data &&
@@ -51,22 +52,26 @@ const ClusterTable: FC<ClusterTableProps> = ({
     pageResult?.taskInfo.data.result?.specificCluster &&
     'items' in pageResult?.taskInfo.data.result?.specificCluster;
 
-  const parseItem = (e: any) => e.row;
-  const parseSquashItem = (e: any) =>
+  type Item =
+    getSpecificCluster_taskInfo_data_SpecificTaskData_result_specificCluster_SquashedCluster_items;
+
+  const parseItem = (e: Item) => e.row;
+  const parseSquashItem = (e: Item) =>
     ['x' + e.amount].concat(
-      selectedDependency.map((column) => e.row[column.column.index])
+      selectedDependency.map((column) => e.row[column.column.index]),
     );
   const pageRows =
     pageCompleted &&
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     pageResult?.taskInfo.data.result.specificCluster?.items.map(
-      squash ? parseSquashItem : parseItem
+      squash ? parseSquashItem : parseItem,
     );
 
   useEffect(() => {
     setData((!squash && !sort && defaultData) || []);
     setLimit(DEFAULT_LIMIT);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [squash, sort]);
 
   useEffect(() => {
@@ -81,6 +86,7 @@ const ClusterTable: FC<ClusterTableProps> = ({
         pagination: { offset: 0, limit },
       },
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [limit, sort, squash, clusterID]);
 
   useEffect(() => {
@@ -91,9 +97,10 @@ const ClusterTable: FC<ClusterTableProps> = ({
       // do polling if there is a response but with no results
       startPolling(2000);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageResult]);
 
-  const onScroll = useCallback(() => {
+  const onScroll = useCallback(async () => {
     if (limit + LIMIT_INCREMENT < totalCount) {
       setLimit((prev) => prev + LIMIT_INCREMENT);
     }
@@ -103,6 +110,7 @@ const ClusterTable: FC<ClusterTableProps> = ({
     if (pageRows) {
       setData(pageRows);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageResult]);
 
   useEffect(() => {
@@ -111,6 +119,7 @@ const ClusterTable: FC<ClusterTableProps> = ({
         message: 'Error occurred while loading current cluster',
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
   return (
@@ -119,7 +128,7 @@ const ClusterTable: FC<ClusterTableProps> = ({
         header={
           header && squash
             ? ['Rows count'].concat(
-                selectedDependency.map((e) => e.column.name)
+                selectedDependency.map((e) => e.column.name),
               )
             : header
         }

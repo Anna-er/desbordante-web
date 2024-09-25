@@ -1,8 +1,9 @@
 import { upperCase, UpperCaseOption } from '@utils/uppercaseOptions';
 import { MainPrimitiveType } from 'types/globalTypes';
+import { Option } from 'types/inputs';
 
 function toScreamingSnakeOption<T extends string>(
-  value: T
+  value: T,
 ): UpperCaseOption<T> {
   return {
     value: upperCase(value.replaceAll(' ', '_') as T),
@@ -59,7 +60,7 @@ const toScreamingSnakeAlgoOption = (algo: Algorithms): AlgoOption => {
 };
 
 export const MFDAlgoOptions: AlgoOption[] = MFDAlgorithms.map(
-  toScreamingSnakeAlgoOption
+  toScreamingSnakeAlgoOption,
 );
 
 export const optionsByPrimitive: Record<MainPrimitiveType, AlgoOption[]> = {
@@ -99,7 +100,7 @@ export type MFDMetric = (typeof MFDMetrics)[number];
 export type MFDMetricOption = UpperCaseOption<MFDMetric>;
 
 export const MFDMetricOptions: MFDMetricOption[] = MFDMetrics.map(
-  toScreamingSnakeOption
+  toScreamingSnakeOption,
 );
 
 export const metricOptionsByPrimitive: Record<
@@ -122,10 +123,7 @@ export const optionsByMetrics: Record<MFDMetric, string[]> = {
 
 export type MFDColumnType = 'Numeric' | 'String';
 
-export type MFDColumnTypeOption = {
-  label: string;
-  value: MFDColumnType;
-};
+export type MFDColumnTypeOption = Option<MFDColumnType>;
 
 export const MFDColumnTypeOptions: MFDColumnTypeOption[] = [
   { label: 'Numeric', value: 'Numeric' },

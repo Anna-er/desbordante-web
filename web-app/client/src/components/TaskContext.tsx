@@ -69,14 +69,14 @@ export const TaskContextProvider: FC<PropsWithChildren> = ({ children }) => {
     GET_TASK_INFO,
     {
       variables: { taskID },
-    }
+    },
   );
 
   const { data: datasetInfo } = useQuery<getDataset, getDatasetVariables>(
     GET_DATASET,
     {
       variables: { taskID, pagination: { offset: 0, limit: 1 } },
-    }
+    },
   );
 
   const datasetHeader = datasetInfo?.taskInfo.dataset?.snippet.header;
@@ -92,7 +92,7 @@ export const TaskContextProvider: FC<PropsWithChildren> = ({ children }) => {
     createSpecificTask,
     { data: clusterTaskResponse, loading: miningTaskLoading },
   ] = useMutation<createSpecificTask, createSpecificTaskVariables>(
-    CREATE_SPECIFIC_TASK
+    CREATE_SPECIFIC_TASK,
   );
   const clusterIsBeingProcessed =
     miningTaskLoading ||
@@ -118,6 +118,7 @@ export const TaskContextProvider: FC<PropsWithChildren> = ({ children }) => {
         },
       },
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDependency]);
 
   useEffect(() => {

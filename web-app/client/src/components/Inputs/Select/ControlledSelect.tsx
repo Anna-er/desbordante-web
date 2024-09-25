@@ -11,21 +11,21 @@ type ControlProps<T extends FieldValues> = {
   control: Control<T>;
   rules?: ControlRules<T>;
 };
-const ControlledSelect = <T extends FieldValues>({
+const ControlledSelect = <T extends FieldValues, TValue = string>({
   controlName,
   control,
   rules,
   ...rest
-}: SelectProps & ControlProps<T>) => (
+}: SelectProps<TValue> & ControlProps<T>) => (
   <Controller
     name={controlName}
     control={control}
     rules={rules}
     render={({ field }) => (
-      <Select
+      <Select<TValue>
         {...field}
-        onChange={(option: any) => field.onChange(option?.value)}
-        value={rest.options?.find((e: any) => e?.value === field.value)}
+        onChange={(option) => field.onChange(option?.value)}
+        value={rest.options?.find((e) => e?.value === field.value)}
         {...rest}
       />
     )}

@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { AR } from '@graphql/operations/fragments/__generated__/AR';
 import { CFD } from '@graphql/operations/fragments/__generated__/CFD';
 import { Column } from '@graphql/operations/fragments/__generated__/Column';
@@ -22,20 +21,23 @@ type FilteredDeps = {
 
 const getFilteredDeps: (
   data: GetMainTaskDeps,
-  type: PrimitiveType
+  type: PrimitiveType,
 ) => FilteredDeps = (data, type) => {
   const { result } = data.taskInfo.data;
   if (!result || result.__typename !== (`${type}TaskResult` as const)) {
     return [];
   }
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   return result.filteredDeps;
 };
 
 export const convertDependencies: (
   primitive?: PrimitiveType,
-  shownData?: GetMainTaskDeps
+  shownData?: GetMainTaskDeps,
 ) => {
+  // Can't recreate explicit type
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
   confidence?: any;
   rhs: GeneralColumn[];
   lhs: GeneralColumn[];

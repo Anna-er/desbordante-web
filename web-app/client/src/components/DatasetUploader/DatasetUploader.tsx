@@ -31,10 +31,10 @@ const DatasetUploader: FC<Props> = ({ onUpload }) => {
     state: 'idle',
   });
   const { data: algorithmsConfig } = useQuery<getAlgorithmsConfig>(
-    GET_ALGORITHMS_CONFIG
+    GET_ALGORITHMS_CONFIG,
   );
   const [uploadDataset] = useMutation<uploadDataset, uploadDatasetVariables>(
-    UPLOAD_DATASET
+    UPLOAD_DATASET,
   );
   const { open: openFilePropertiesModal, close: closeFilePropertiesModal } =
     useModal('FILE_PROPERTIES');
@@ -94,14 +94,14 @@ const DatasetUploader: FC<Props> = ({ onUpload }) => {
       return;
     }
 
-    const { allowedFileFormats, maxFileSize } =
+    const { allowedFileFormats, userDiskLimit } =
       algorithmsConfig?.algorithmsConfig.fileConfig;
 
     if (
       !files ||
       files.length !== 1 ||
       !allowedFileFormats.includes(files[0].type) ||
-      files[0].size > maxFileSize
+      files[0].size > userDiskLimit
     ) {
       setFileUploadProgress({ state: 'fail' });
       return;
@@ -137,7 +137,7 @@ const DatasetUploader: FC<Props> = ({ onUpload }) => {
         styles.uploader,
         isFileDragged && styles.dragged_outside,
         isDraggedInside && styles.dragged_inside,
-        styles[fileUploadProgress.state]
+        styles[fileUploadProgress.state],
       )}
       tabIndex={0}
       onClick={() => inputFile?.current?.click()}
@@ -154,31 +154,36 @@ const DatasetUploader: FC<Props> = ({ onUpload }) => {
           !isFileDragged &&
           !isDraggedInside && (
             <>
-              <Image src={uploadIcon} height={20} width={20} />
+              <Image
+                src={uploadIcon}
+                height={20}
+                width={20}
+                alt="Upload a File"
+              />
               <p>Upload a File</p>
             </>
           )}
         {(isFileDragged || isDraggedInside) && (
           <>
-            <Image src={dragIcon} height={20} width={20} />
+            <Image src={dragIcon} height={20} width={20} alt="Drop here" />
             <p>Drop here</p>
           </>
         )}
         {fileUploadProgress.state === 'process' && (
           <>
-            <Image src={uploadIcon} height={20} width={20} />
+            <Image src={uploadIcon} height={20} width={20} alt="Uploading..." />
             <p>Uploading...</p>
           </>
         )}
         {fileUploadProgress.state === 'complete' && (
           <>
-            <Image src={checkIcon} height={20} width={20} />
+            <Image src={checkIcon} height={20} width={20} alt="Complete" />
             <p>Complete</p>
           </>
         )}
         {fileUploadProgress.state === 'fail' && (
           <>
-            <Image src={crossIcon} height={20} width={20} />
+            <Image src={crossIcon} height={20} width={20} alt="Error" />
             <p>Error</p>
           </>
         )}

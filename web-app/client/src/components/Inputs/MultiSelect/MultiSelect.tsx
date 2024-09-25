@@ -1,29 +1,36 @@
 import cn from 'classnames';
-import { forwardRef, ForwardRefRenderFunction, ReactNode } from 'react';
-import ReactSelect, {
-  Props as ReactSelectProps,
-  PropsValue,
-} from 'react-select';
+import {
+  ForwardedRef,
+  forwardRef,
+  ForwardRefRenderFunction,
+  ReactNode,
+} from 'react';
+import ReactSelect, { Props as ReactSelectProps } from 'react-select';
 import { InputPropsBase } from '@components/Inputs';
 import Tooltip from '@components/Tooltip';
+import { Option } from 'types/inputs';
 import customComponents, { colorStyles } from './customComponents';
 import styles from './MultiSelect.module.scss';
 
-export type MultiSelectProps = InputPropsBase &
-  ReactSelectProps & {
+export type MultiSelectProps<TValue = string> = InputPropsBase &
+  ReactSelectProps<Option<TValue>, true> & {
     tooltip?: ReactNode;
   };
 
-const MultiSelect: ForwardRefRenderFunction<any, MultiSelectProps> = (
+// Can't recreate explicit type
+// eslint-disable-next-line  @typescript-eslint/no-explicit-any
+type RefElement = any;
+
+const MultiSelect: ForwardRefRenderFunction<RefElement, MultiSelectProps> = (
   { label, error, tooltip, className, id, components, ...props },
-  ref
+  ref,
 ) => {
   return (
     <div
       className={cn(
         styles.inputSelect,
         props.isDisabled && styles.disabled,
-        className
+        className,
       )}
     >
       <div className={styles.top}>
@@ -50,4 +57,6 @@ const MultiSelect: ForwardRefRenderFunction<any, MultiSelectProps> = (
   );
 };
 
-export default forwardRef(MultiSelect);
+export default forwardRef(MultiSelect) as <TValue = string>(
+  props: MultiSelectProps<TValue> & { ref?: ForwardedRef<RefElement> },
+) => ReturnType<typeof MultiSelect>;

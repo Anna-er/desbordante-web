@@ -18,7 +18,7 @@ type ClustersResult = {
 
 const useClustersPreview: (
   specificTaskID: string | undefined,
-  page: number
+  page: number,
 ) => ClustersResult = (specificTaskID, page) => {
   const [
     getClustersPreview,
@@ -27,7 +27,7 @@ const useClustersPreview: (
     GET_CLUSTERS_PREVIEW,
     {
       fetchPolicy: 'network-only',
-    }
+    },
   );
   const { showError } = useErrorContext();
   const [totalCount, setTotalCount] = useState<number | undefined>();
@@ -47,6 +47,7 @@ const useClustersPreview: (
         },
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, specificTaskID]);
 
   useEffect(() => {
@@ -57,6 +58,7 @@ const useClustersPreview: (
       // do polling if there is a response but with no results
       startPolling(2000);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error]);
 
   useEffect(() => {
@@ -65,6 +67,7 @@ const useClustersPreview: (
         message: 'Error occurred while loading clusters',
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
   useEffect(() => {
@@ -74,7 +77,7 @@ const useClustersPreview: (
         ('result' in data?.taskInfo.data &&
           data?.taskInfo?.data?.result &&
           data?.taskInfo?.data?.result.clustersCount) ||
-          0
+          0,
       );
     }
   }, [data]);

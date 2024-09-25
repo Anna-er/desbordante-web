@@ -1,6 +1,6 @@
 import { ApolloError, ForbiddenError, UserInputError } from "apollo-server-core";
 import { CsvParserStream, parse } from "fast-csv";
-import { FindOptions, Op, col, fn } from "sequelize";
+import { FindOptions, Op, col, fn, literal } from "sequelize";
 import {
     GeneralTaskConfig,
     MainPrimitiveType,
@@ -11,11 +11,18 @@ import {
 } from "../../../db/models/TaskData/configs/GeneralTaskConfig";
 import { OverviewData, Resolvers, TaskProcessStatusType } from "../../types/types";
 import { applyPagination, resolverCannotBeCalled, returnParent } from "../../util";
+import {
+    getFindOptionsFromProps,
+    getQueryFromRangeFilter,
+    getQueryFromSearchFilter,
+} from "../util";
 import { AbstractFilter } from "./DependencyFilters/AbstractFilter";
 import { AuthenticationError } from "apollo-server-express";
 import { CompactData } from "./DependencyFilters/CompactData";
 import { FDFilter } from "./DependencyFilters/FDFilter";
 import { FileInfo } from "../../../db/models/FileData/FileInfo";
+import { TaskState } from "../../../db/models/TaskData/TaskState";
+import { User } from "../../../db/models/UserData/User";
 import { MFDFilter } from "./DependencyFilters/MFDFilter";
 import { Row } from "@fast-csv/parse";
 import { TaskCreatorFactory } from "../TaskCreating/Creator/AbstractCreator";
@@ -621,14 +628,6 @@ export const TaskInfoResolvers: Resolvers = {
             }
             return fileInfo.getColumnNames();
         },
-        numberOfUses: async ({ fileID }, _, { models }) => {
-            return await models.GeneralTaskConfig.count({
-                where: {
-                    type: { [Op.in]: mainPrimitives },
-                    fileID,
-                },
-            });
-        },
     },
     Query: {
         datasetInfo: async (_, { fileID }, { models, sessionInfo }) => {
@@ -638,9 +637,6 @@ export const TaskInfoResolvers: Resolvers = {
             const file = await models.FileInfo.findByPk(fileID);
             if (!file) {
                 throw new UserInputError("File not found");
-            }
-            if (!file.isValid) {
-                throw new ApolloError("File isn't valid");
             }
             if (
                 file.isBuiltIn ||
@@ -665,7 +661,7 @@ export const TaskInfoResolvers: Resolvers = {
                     prefix: MainPrimitiveType;
                 }) || null;
             const state = await models.TaskState.findByPk(taskID, {
-                attributes: ["userID", "isPrivate"],
+                attributes: ["userID", "isPrivate", "createdAt"],
             });
             if (!taskConfig || !state) {
                 throw new UserInputError("Invalid taskID was provided", {
@@ -685,21 +681,55 @@ export const TaskInfoResolvers: Resolvers = {
             }
             throw new ForbiddenError("User doesn't have permissions");
         },
-        tasksInfo: async (parent, { pagination }, { models, sessionInfo }) => {
-            if (!sessionInfo || !sessionInfo.permissions.includes("VIEW_ADMIN_INFO")) {
-                throw new AuthenticationError("User doesn't have permissions");
+        tasksInfo: async (parent, { props }, { models, sessionInfo }) => {
+            if (!sessionInfo) {
+                throw new AuthenticationError("User must be authorized");
             }
-            const configs = await models.GeneralTaskConfig.findAll({
-                ...pagination,
+            if (!sessionInfo.permissions.includes("VIEW_ADMIN_INFO")) {
+                throw new ForbiddenError("User doesn't have permissions");
+            }
+
+            const options = getFindOptionsFromProps(
+                props,
+                {
+                    searchString: (value) => ({
+                        "$file.originalFileName$": getQueryFromSearchFilter(value),
+                    }),
+                    period: (value) => ({
+                        createdAt: getQueryFromRangeFilter(value),
+                    }),
+                    elapsedTime: (value) => ({
+                        "$taskState.elapsedTime$": getQueryFromRangeFilter(value),
+                    }),
+                },
+                {
+                    ELAPSED_TIME: "\"taskState\".\"elapsedTime\"",
+                    STATUS: "status",
+                    CREATION_TIME: "\"GeneralTaskConfig\".\"createdAt\"",
+                    USER: "\"userID\"",
+                },
+                ["includeDeleted"]
+            );
+
+            const { rows, count } = await models.GeneralTaskConfig.findAndCountAll({
+                ...options,
+                where: {
+                    ...options.where,
+                    type: { [Op.in]: mainPrimitives },
+                },
                 attributes: ["taskID", "fileID", ["type", "prefix"]],
                 raw: true,
+                include: [TaskState, FileInfo],
+                paranoid: !(props.filters?.includeDeleted ?? false),
             });
 
-            return (
-                (configs as unknown as (GeneralTaskConfig & {
-                    prefix: MainPrimitiveType;
-                })[]) || []
-            );
+            return {
+                data:
+                    (rows as unknown as (GeneralTaskConfig & {
+                        prefix: MainPrimitiveType;
+                    })[]) || [],
+                total: count,
+            };
         },
     },
     Mutation: {

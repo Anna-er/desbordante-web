@@ -4,11 +4,10 @@ import resourcesLimit from '@assets/icons/resources-limit.svg';
 import serverError from '@assets/icons/server-error.svg';
 import usersQueue from '@assets/icons/users-queue.svg';
 import { TaskState } from '@atoms/primaryAtoms/taskStateAtom';
-import { getTaskInfo } from '@graphql/operations/queries/__generated__/getTaskInfo';
 
 const getTaskStatusData = (
   error: ApolloError | undefined,
-  state: TaskState | undefined
+  state: TaskState | undefined,
 ) => {
   if (error) {
     return {
