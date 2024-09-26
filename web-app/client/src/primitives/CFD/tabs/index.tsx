@@ -3,10 +3,10 @@ import DatatableIcon from '@assets/icons/datatable.svg?component';
 import DropDownIcon from '@assets/icons/list-dropdown.svg?component';
 import dynamic from 'next/dynamic';
 
-const DatasetSnippetComponent = dynamic(() => import('../../CFD/tabs/menuDatasetSnippet'), {
+const DatasetSnippetComponent = dynamic(() => import('../../common/menuDatasetSnippet'), {
   ssr: false,
 });
-const InstanceListComponent = dynamic(() => import('../../CFD/tabs/menuInstanceList'), {
+const InstanceListComponent = dynamic(() => import('../../common/menuInstanceList'), {
   ssr: false,
 });
 const StatisticsComponent = dynamic(() => import('../../CFD/tabs/menuStatistics'), {
