@@ -13,22 +13,38 @@ import styles from '@styles/Snippet.module.scss';
 export default function Page() {
   const { taskID, currentTab, switchTab } = useReportsRouter();
 
-
   const { data: taskInfo } = useQuery<getTaskInfo, getTaskInfoVariables>(
     GET_TASK_INFO,
     {
       variables: { taskID },
     }
   );
+
   const primitiveType = taskInfo?.taskInfo.data.baseConfig.type;
-
-  if (primitiveType) {
-    const selectedTab = reportsConfig[primitiveType].tabs.find(tab => currentTab === tab.pathName) || reportsConfig[primitiveType].tabs[0];
-    if (selectedTab) {
-      return <TaskContextProvider><ReportsLayout pageClass={styles.page} containerClass={styles.container}>
-        <selectedTab.component />
-      </ReportsLayout>;</TaskContextProvider>
-
-    }
+  if (!primitiveType) {
+    return null;
   }
+
+  const tabsConfig = reportsConfig[primitiveType]?.tabs;
+  if (!tabsConfig || tabsConfig.length === 0) {
+    return null;
+  }
+
+  const selectedTab = tabsConfig.find(tab => currentTab === tab.pathName) || tabsConfig[0];
+  if (!selectedTab) {
+    return null;
+  }
+
+  const SelectedTabComponent = selectedTab.component;
+  if (!SelectedTabComponent) {
+    return null;
+  }
+
+  return (
+    <TaskContextProvider>
+      <ReportsLayout pageClass={styles.page} containerClass={styles.container}>
+        <SelectedTabComponent />
+      </ReportsLayout>
+    </TaskContextProvider>
+  );
 }

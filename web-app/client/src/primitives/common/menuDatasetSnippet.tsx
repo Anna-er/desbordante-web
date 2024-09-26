@@ -51,7 +51,6 @@ const ReportsSnippet: NextPageWithLayout = () => {
 
   const containerClass = styles.content;
 
-  console.log(pageClass, containerClass)
   return (
     <><h5 className={styles.header}>Dataset Snippet</h5>
       <ScrollableTable

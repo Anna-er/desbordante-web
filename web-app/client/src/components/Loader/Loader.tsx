@@ -23,9 +23,9 @@ const Loader: FC = () => {
       type !== ''
     ) {
       setTimeout(() => {
+        const pathName = reportsConfig[type as PrimitiveType]?.tabs[0].pathName;
         void router.push({
-          pathname: `/reports/${data.taskID}/${reportsConfig[type as PrimitiveType]?.tabs[0].pathName}`,
-          query: {},
+          pathname: `/reports/${data.taskID}/${pathName}`,
         });
       }, 500);
     }

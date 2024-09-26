@@ -2,6 +2,7 @@ import ChartIcon from '@assets/icons/chart.svg?component';
 import DatatableIcon from '@assets/icons/datatable.svg?component';
 import DropDownIcon from '@assets/icons/list-dropdown.svg?component';
 import dynamic from 'next/dynamic';
+import { TabConfig } from '../../reportsConfig';
 
 const DatasetSnippetComponent = dynamic(() => import('../../common/menuDatasetSnippet'), {
   ssr: false,
@@ -10,11 +11,6 @@ const InstanceListComponent = dynamic(() => import('../../common/menuInstanceLis
   ssr: false,
 });
 
-
-
-import { TabConfig } from '../../reportsConfig';
-
-import React from 'react';
 
 const menuInstanceList: TabConfig = {
   pathName: 'dependencies',
