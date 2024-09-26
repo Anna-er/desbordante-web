@@ -23,7 +23,7 @@ import {
 import { GET_MAIN_TASK_DEPS } from '@graphql/operations/queries/getDeps';
 import styles from '@styles/Dependencies.module.scss';
 import { convertDependencies } from '@utils/convertDependencies';
-import { IntersectionFilter, OrderBy, PrimitiveType } from 'types/globalTypes';
+import { IntersectionFilter, OrderDirection, PrimitiveType } from 'types/globalTypes';
 import { NextPageWithLayout } from 'types/pageWithLayout';
 
 const ReportsDependencies: NextPageWithLayout = () => {
@@ -49,7 +49,7 @@ const ReportsDependencies: NextPageWithLayout = () => {
           filterString: '',
           pagination: { limit: 10, offset: 0 },
           ...sortingParams,
-          orderBy: OrderBy.ASC,
+          orderDirection: OrderDirection.ASC,
         },
       },
     });
@@ -73,7 +73,7 @@ const ReportsDependencies: NextPageWithLayout = () => {
   const filter = useMemo<IntersectionFilter>(() => {
     const sortingParams = {
       [(primitive === PrimitiveType.TypoFD ? PrimitiveType.FD : primitive) +
-        'SortBy']: ordering,
+        'OrderingParameter']: ordering,
     };
 
     return {
@@ -81,7 +81,7 @@ const ReportsDependencies: NextPageWithLayout = () => {
       filterString: search,
       pagination: { limit: 10, offset: (page - 1) * 10 },
       ...sortingParams,
-      orderBy: direction,
+      orderDirection: direction,
       mustContainRhsColIndices: mustContainRhsColIndices.length
         ? mustContainRhsColIndices
         : null,
