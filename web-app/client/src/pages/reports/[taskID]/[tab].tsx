@@ -41,10 +41,8 @@ export default function Page() {
   }
 
   return (
-    <TaskContextProvider>
       <ReportsLayout pageClass={styles.page} containerClass={styles.container}>
         <SelectedTabComponent />
       </ReportsLayout>
-    </TaskContextProvider>
   );
 }

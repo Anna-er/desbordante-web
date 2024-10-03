@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { useMemo, useRef } from 'react';
 import ScrollableTable from '@components/ScrollableTable';
-import { useTaskContext } from '@components/TaskContext';
+import { useFDPrimitiveList } from '../FD/store';
 import {
   getDataset,
   getDatasetVariables,
@@ -16,7 +16,7 @@ const LIMIT_INCREMENT = 30;
 
 const ReportsSnippet: NextPageWithLayout = () => {
 
-  const { taskID, selectedDependency } = useTaskContext();
+  const { taskID, selectedDependency } = useFDPrimitiveList();
   const paginationLimit = useRef(DEFAULT_LIMIT);
   const { data } = useQuery<getDataset, getDatasetVariables>(GET_DATASET, {
     variables: {

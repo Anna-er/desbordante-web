@@ -2,7 +2,7 @@ import { useMutation } from '@apollo/client';
 import { FC } from 'react';
 import DownloadIcon from '@assets/icons/download.svg?component';
 import Button from '@components/Button';
-import { useTaskContext } from '@components/TaskContext';
+import { useReportsRouter } from '@components/useReportsRouter';
 import {
   downloadResults,
   downloadResultsVariables,
@@ -21,7 +21,7 @@ const removePagination = (filter: IntersectionFilter): IntersectionFilter => ({
 });
 
 const DownloadResult: FC<Props> = ({ filter, disabled }) => {
-  const { taskID } = useTaskContext();
+  const { taskID } = useReportsRouter();
   const [downloadResults, { loading }] = useMutation<
     downloadResults,
     downloadResultsVariables

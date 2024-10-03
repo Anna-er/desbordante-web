@@ -15,7 +15,6 @@ import {
 } from '@components/Filters';
 import { Text } from '@components/Inputs';
 import Pagination from '@components/Pagination/Pagination';
-import { useTaskContext } from '@components/TaskContext';
 import {
   GetMainTaskDeps,
   GetMainTaskDepsVariables,
@@ -25,6 +24,8 @@ import styles from '@styles/Dependencies.module.scss';
 import { convertDependencies } from '@utils/convertDependencies';
 import { IntersectionFilter, OrderDirection, PrimitiveType } from 'types/globalTypes';
 import { NextPageWithLayout } from 'types/pageWithLayout';
+import { useFDPrimitiveList } from '../FD/store';
+
 
 const ReportsDependencies: NextPageWithLayout = () => {
   const {
@@ -34,7 +35,7 @@ const ReportsDependencies: NextPageWithLayout = () => {
       rhs: mustContainRhsColIndices,
       lhs: mustContainLhsColIndices,
     },
-  } = useTaskContext();
+  } = useFDPrimitiveList();
 
   const primitiveType = taskInfo?.taskInfo.data.baseConfig.type;
   const defaultData = undefined;

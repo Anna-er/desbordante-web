@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import _ from 'lodash';
 import { FC, ReactElement } from 'react';
 import LongArrowIcon from '@assets/icons/long-arrow.svg?component';
-import { useTaskContext } from '@components/TaskContext';
+import { useFDPrimitiveList } from '../../primitives/FD/store';
 import { GeneralColumn } from '@utils/convertDependencies';
 import styles from './DependencyList.module.scss';
 
@@ -37,7 +37,7 @@ const makeSide: (
 
 const DependencyList: FC<Props> = ({ deps, infoVisible }) => {
   const { selectedDependency, selectDependency, errorDependency } =
-    useTaskContext();
+    useFDPrimitiveList();
 
   return (
     <div className={styles.dependencyListContainer}>

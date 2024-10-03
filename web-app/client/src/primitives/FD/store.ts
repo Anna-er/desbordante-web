@@ -12,7 +12,6 @@ import { PrimitiveType, SpecificTaskType } from 'types/globalTypes';
 
 type DependencyFilter = { rhs: number[]; lhs: number[] };
 
-// Атомы для состояния
 export const taskIDAtom = atom<string>(() => {
   const { taskID } = useReportsRouter();
   return taskID;
@@ -22,12 +21,10 @@ export const selectedDependencyAtom = atom<GeneralColumn[]>([]);
 export const errorDependencyAtom = atom<GeneralColumn[]>([]);
 export const specificTaskIDAtom = atom<string | undefined>(undefined);
 
-// Атом для taskInfo с использованием useQuery
 export const taskInfoAtom = atom((get) => {
   const taskID = get(taskIDAtom);
   if (!taskID) return null;
 
-  // Используем useQuery для получения taskInfo
   const { data } = useQuery<getTaskInfo, getTaskInfoVariables>(GET_TASK_INFO, {
     variables: { taskID },
   });
@@ -35,7 +32,6 @@ export const taskInfoAtom = atom((get) => {
   return data ? data.taskInfo : null;
 });
 
-// Пример использования атомов и мутаций в пользовательском хуке
 export const useFDPrimitiveList = () => {
   const { taskID: routerTaskID } = useReportsRouter();
   const [taskID, setTaskID] = useAtom(taskIDAtom);
@@ -51,19 +47,15 @@ export const useFDPrimitiveList = () => {
   //   setTaskID(routerTaskID);
   // }
 
-  // Получаем taskInfo через Apollo useQuery
   const { data: taskInfo, loading: taskInfoLoading, error: taskInfoError } = useQuery<getTaskInfo, getTaskInfoVariables>(GET_TASK_INFO, {
     variables: { taskID },
     skip: !taskID, // Пропускаем запрос, если taskID еще нет
   });
 
-  // Получаем данные кластеризации через useClustersPreview
   const { miningCompleted, data: clusterPreviewData, loading: clusterPreviewLoading, error: clusterPreviewError } = useClustersPreview(specificTaskID, 1);
 
-  // Используем мутацию createSpecificTask для создания новой задачи
   const [createSpecificTask, { data: clusterTaskResponse, loading: miningTaskLoading }] = useMutation<createSpecificTask, createSpecificTaskVariables>(CREATE_SPECIFIC_TASK);
 
-  // Обрабатываем зависимость: если задача кластеризации в процессе, блокируем выбор
   const clusterIsBeingProcessed = miningTaskLoading || clusterPreviewLoading || (!!clusterPreviewData && !miningCompleted && !clusterPreviewError);
 
   const selectDependency = (newDependency: GeneralColumn[]) => {
@@ -73,7 +65,6 @@ export const useFDPrimitiveList = () => {
     } else {
       setSelectedDependency(newDependency);
 
-      // Если тип задачи TypoFD, запускаем мутацию создания специфичной задачи
       if (taskInfo?.taskInfo.data.baseConfig.type === PrimitiveType.TypoFD) {
         createSpecificTask({
           variables: {
@@ -89,12 +80,10 @@ export const useFDPrimitiveList = () => {
     }
   };
 
-  // Обрабатываем успешный ответ создания задачи
   if (clusterTaskResponse) {
     setSpecificTaskID(clusterTaskResponse.createSpecificTask.taskID);
   }
 
-  // Авто-сброс ошибок через 5 секунд
   if (errorDependency.length > 0) {
     setTimeout(() => setErrorDependency([]), 5000);
   }
