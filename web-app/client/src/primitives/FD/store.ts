@@ -26,25 +26,21 @@ import {
   GetMainTaskDepsVariables,
 } from '@graphql/operations/queries/__generated__/GetMainTaskDeps';
 import { GET_PIE_CHART_DATA } from '@graphql/operations/queries/getPieChartData';
-import { set } from 'date-fns';
 
 const DEFAULT_LIMIT = 30;
 
-type DependencyFilter = { rhs: number[]; lhs: number[] };
-
-export const taskIDAtom = atom<string>(() => {
-  const { taskID } = useReportsRouter();
-  return taskID;
-});
-
+// Atom definitions
+export const taskIDAtom = atom<string | undefined>(undefined);
 export const defaultDataAtom = atom<GetMainTaskDeps | undefined>(undefined);
-export const dependenciesFilterAtom = atom<DependencyFilter>({ rhs: [], lhs: [] });
+export const dependenciesFilterAtom = atom<{ rhs: number[], lhs: number[] }>({ rhs: [], lhs: [] });
 export const selectedDependencyAtom = atom<GeneralColumn[]>([]);
 export const errorDependencyAtom = atom<GeneralColumn[]>([]);
 export const specificTaskIDAtom = atom<string | undefined>(undefined);
 export const datasetAtom = atom<getDataset | undefined>(undefined);
+export const pieChartDataAtom = atom<getPieChartData | undefined>(undefined);
+export const pieChartLoadingAtom = atom<boolean | undefined>(undefined);
 
-
+// TaskInfo Atom
 export const taskInfoAtom = atom((get) => {
   const taskID = get(taskIDAtom);
   if (!taskID) return null;
@@ -56,15 +52,39 @@ export const taskInfoAtom = atom((get) => {
   return data ? data.taskInfo : null;
 });
 
-export const useFDStatistics = () => {
+// Функция для инициализации и получения taskID
+export const useTaskID = () => {
+  const { taskID: routerTaskID } = useReportsRouter();
   const [taskID, setTaskID] = useAtom(taskIDAtom);
-  const [dependenciesFilter, setDependenciesFilter] = useAtom(dependenciesFilterAtom);
-  
-  const { data: pieChartData, loading: pieChartLoading, error: pieChartError } = useQuery<getPieChartData, getPieChartDataVariables>(
-    GET_PIE_CHART_DATA,
-    { variables: { taskID } }
-  );
 
+  // Инициализация taskID через useEffect, чтобы избежать вызова хуков внутри атомов
+  useEffect(() => {
+    if (routerTaskID && routerTaskID !== taskID) {
+      setTaskID(routerTaskID);
+    }
+  }, [routerTaskID, taskID, setTaskID]);
+
+  // Возвращаем taskID и проверяем, чтобы он был строкой
+  return taskID || '';
+};
+export const useFDStatistics = () => {
+  const taskID = useTaskID();
+  const [dependenciesFilter, setDependenciesFilter] = useAtom(dependenciesFilterAtom);
+  const [pieChartData, setPieChartData] = useAtom(pieChartDataAtom);
+  const [pieChartLoading, setPieChartLoading] = useAtom(pieChartLoadingAtom);
+
+  const { data, loading } = useQuery<getPieChartData, getPieChartDataVariables>(GET_PIE_CHART_DATA, {
+    variables: { taskID },
+    skip: !taskID,
+  });
+
+  useEffect(() => {
+    if (data) setPieChartData(data);
+  }, [data, setPieChartData]);
+
+  useEffect(() => {
+    setPieChartLoading(loading);
+  }, [loading, setPieChartLoading]);
 
   return {
     taskID,
@@ -75,55 +95,55 @@ export const useFDStatistics = () => {
   };
 };
 
-
-
 export const useFDPrimitiveList = () => {
-  // const [defaultData, setDefaultData] = useAtom(defaultDataAtom);
-  const [taskID, setTaskID] = useAtom(taskIDAtom);
+  const taskID = useTaskID();
   const [defaultData, setDefaultData] = useAtom(defaultDataAtom);
   const [dependenciesFilter, setDependenciesFilter] = useAtom(dependenciesFilterAtom);
+
+  const { data, loading } = useQuery<getPieChartData, getPieChartDataVariables>(GET_PIE_CHART_DATA, {
+    variables: { taskID },
+    skip: !taskID,
+  });
+
 
   const { data: taskInfo, loading: taskInfoLoading, error: taskInfoError } = useQuery<getTaskInfo, getTaskInfoVariables>(
     GET_TASK_INFO,
     {
       variables: { taskID },
+      skip: !taskID,
     },
   );
 
-  // Когда taskInfo загружен, определяем тип задачи
   const primitiveType = taskInfo?.taskInfo.data.baseConfig.type;
 
- // Минимально допустимый объект фильтра
- const defaultFilter = {
-  withoutKeys: false,
-  filterString: '',
-  pagination: { limit: 10, offset: 0 },
-  orderDirection: OrderDirection.ASC,
-};
+  const defaultFilter = {
+    withoutKeys: false,
+    filterString: '',
+    pagination: { limit: 10, offset: 0 },
+    orderDirection: OrderDirection.ASC,
+  };
 
-// Второй запрос для получения зависимостей задачи (MainTaskDeps)
-const { data: mainTaskDepsData, loading: depsLoading, error: depsError } = useQuery<GetMainTaskDeps, GetMainTaskDepsVariables>(
-  GET_MAIN_TASK_DEPS,
-  {
-    variables: {
-      taskID,
-      filter: primitiveType
-        ? {
-            ...defaultFilter,
-            ...getSortingParams(primitiveType), // Параметры сортировки
-          }
-        : defaultFilter, // Если primitiveType не определён, передаем минимальный фильтр
-    },
-    skip: !taskID, // Пропускаем запрос, если taskID ещё нет
-  }
-);
-  // Используем useEffect для обновления defaultDataAtom, если данные mainTaskDepsData изменяются
+  const { data: mainTaskDepsData, loading: depsLoading, error: depsError } = useQuery<GetMainTaskDeps, GetMainTaskDepsVariables>(
+    GET_MAIN_TASK_DEPS,
+    {
+      variables: {
+        taskID: taskID,
+        filter: primitiveType
+          ? {
+              ...defaultFilter,
+              ...getSortingParams(primitiveType),
+            }
+          : defaultFilter,
+      },
+      skip: !taskID,
+    }
+  );
+
   useEffect(() => {
     if (mainTaskDepsData) {
       setDefaultData(mainTaskDepsData);
     }
   }, [mainTaskDepsData, setDefaultData]);
-
 
   return {
     taskInfo,
@@ -134,24 +154,23 @@ const { data: mainTaskDepsData, loading: depsLoading, error: depsError } = useQu
 };
 
 export const useFDDatasetSnippet = () => {
-  const { taskID: routerTaskID } = useReportsRouter();
-  const [taskID, setTaskID] = useAtom(taskIDAtom);
-  // const [dataset, setDataset] = useAtom(datasetAtom);
-  const [selectedDependency, selectDependency] = useAtom(selectedDependencyAtom);
+  const taskID = useTaskID();
+  const [selectedDependency] = useAtom(selectedDependencyAtom);
+  const [dataset, setDataset] = useAtom(datasetAtom);
 
-  const { data: dataset } = useQuery<getDataset, getDatasetVariables>(GET_DATASET, {
+  const { data } = useQuery<getDataset, getDatasetVariables>(GET_DATASET, {
     variables: {
-      taskID,
+      taskID: taskID,
       pagination: {
         offset: 0,
         limit: DEFAULT_LIMIT,
       },
     },
   });
-  
-  // setDataset(data);
-  // console.log(data);
-  // console.log(dataset);
+
+  useEffect(() => {
+    if (data) setDataset(data);
+  }, [data, setDataset]);
 
   return {
     taskID,
@@ -161,7 +180,7 @@ export const useFDDatasetSnippet = () => {
 };
 
 export const useDependencyList = () => {
-  const [taskID, setTaskID] = useAtom(taskIDAtom);
+  const taskID = useTaskID();
   const [dependenciesFilter, setDependenciesFilter] = useAtom(dependenciesFilterAtom);
   const [selectedDependency, setSelectedDependency] = useAtom(selectedDependencyAtom);
   const [errorDependency, setErrorDependency] = useAtom(errorDependencyAtom);
@@ -169,23 +188,15 @@ export const useDependencyList = () => {
 
   const { showError } = useErrorContext();
 
-  // Устанавливаем taskID из роутера, если его еще нет
-  // if (!taskID && routerTaskID) {
-  //   setTaskID(routerTaskID);
-  // }
+  const { data: taskInfo } = useQuery<getTaskInfo, getTaskInfoVariables>(GET_TASK_INFO, {
+    variables: { taskID },
+  });
 
-  const { data: taskInfo, loading: taskInfoLoading, error: taskInfoError } = useQuery<getTaskInfo, getTaskInfoVariables>(
-    GET_TASK_INFO,
-    {
-      variables: { taskID },
-    },
-  );
-  
-  const { miningCompleted, data: clusterPreviewData, loading: clusterPreviewLoading, error: clusterPreviewError } = useClustersPreview(specificTaskID, 1);
+  const { miningCompleted, data: clusterPreviewData, loading: clusterPreviewLoading } = useClustersPreview(specificTaskID, 1);
 
-  const [createSpecificTask, { data: clusterTaskResponse, loading: miningTaskLoading }] = useMutation<createSpecificTask, createSpecificTaskVariables>(CREATE_SPECIFIC_TASK);
+  const [createSpecificTask, { data: clusterTaskResponse }] = useMutation<createSpecificTask, createSpecificTaskVariables>(CREATE_SPECIFIC_TASK);
 
-  const clusterIsBeingProcessed = miningTaskLoading || clusterPreviewLoading || (!!clusterPreviewData && !miningCompleted && !clusterPreviewError);
+  const clusterIsBeingProcessed = clusterPreviewLoading || (!!clusterPreviewData && !miningCompleted);
 
   const selectDependency = (newDependency: GeneralColumn[]) => {
     if (clusterIsBeingProcessed) {
@@ -209,17 +220,21 @@ export const useDependencyList = () => {
     }
   };
 
-  if (clusterTaskResponse) {
-    setSpecificTaskID(clusterTaskResponse.createSpecificTask.taskID);
-  }
+  useEffect(() => {
+    if (clusterTaskResponse) {
+      setSpecificTaskID(clusterTaskResponse.createSpecificTask.taskID);
+    }
+  }, [clusterTaskResponse, setSpecificTaskID]);
 
-  if (errorDependency.length > 0) {
-    setTimeout(() => setErrorDependency([]), 5000);
-  }
+  useEffect(() => {
+    if (errorDependency.length > 0) {
+      setTimeout(() => setErrorDependency([]), 5000);
+    }
+  }, [errorDependency, setErrorDependency]);
 
   return {
     errorDependency,
     selectedDependency,
-    selectDependency
+    selectDependency,
   };
 };
