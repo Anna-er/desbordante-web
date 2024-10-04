@@ -9,7 +9,6 @@ import DependencyList from '@components/DependencyList/DependencyList';
 import DownloadResult from '@components/DownloadResult';
 import {
   FilteringWindow,
-  getSortingParams,
   OrderingWindow,
   useFilters,
 } from '@components/Filters';
@@ -31,30 +30,13 @@ const ReportsDependencies: NextPageWithLayout = () => {
   const {
     taskInfo,
     taskID,
+    defaultData,
     dependenciesFilter: {
       rhs: mustContainRhsColIndices,
       lhs: mustContainLhsColIndices,
     },
   } = useFDPrimitiveList();
 
-  const primitiveType = taskInfo?.taskInfo.data.baseConfig.type;
-  const defaultData = undefined;
-  if (primitiveType) {
-    const sortingParams = getSortingParams(primitiveType);
-
-    const { data: defaultData } = useQuery<GetMainTaskDeps>(GET_MAIN_TASK_DEPS, {
-      variables: {
-        taskID: taskID,
-        filter: {
-          withoutKeys: false,
-          filterString: '',
-          pagination: { limit: 10, offset: 0 },
-          ...sortingParams,
-          orderDirection: OrderDirection.ASC,
-        },
-      },
-    });
-  }
 
 
   const primitive: PrimitiveType | undefined =

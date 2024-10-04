@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
 import LayeredChart from '@components/Chart/LayeredChart';
-import { useFDPrimitiveList } from '../store';
+import { useFDStatistics } from '../store';
 import {
   getPieChartData,
   getPieChartDataVariables,
@@ -23,13 +23,8 @@ const getChartData = (data?: getPieChartData) => {
 };
 
 const ReportsCharts: NextPageWithLayout = () => {
-  const { taskID, dependenciesFilter, setDependenciesFilter } =
-  useFDPrimitiveList();
-
-  const { loading, data } = useQuery<getPieChartData, getPieChartDataVariables>(
-    GET_PIE_CHART_DATA,
-    { variables: { taskID } }
-  );
+  const { taskID, dependenciesFilter, setDependenciesFilter, pieChartData: data, pieChartLoading: loading } =
+  useFDStatistics();
 
   const { lhs, rhs } = getChartData(data);
 
