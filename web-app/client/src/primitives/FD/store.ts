@@ -1,5 +1,6 @@
 import { atom, useAtom } from 'jotai';
 import { useQuery, useMutation } from '@apollo/client';
+import { useEffect } from 'react';
 import { GET_TASK_INFO } from '@graphql/operations/queries/getTaskInfo';
 import { getTaskInfo, getTaskInfoVariables } from '@graphql/operations/queries/__generated__/getTaskInfo';
 import { CREATE_SPECIFIC_TASK } from '@graphql/operations/mutations/createSpecificTask';
@@ -89,26 +90,39 @@ export const useFDPrimitiveList = () => {
     },
   );
 
+  // Когда taskInfo загружен, определяем тип задачи
   const primitiveType = taskInfo?.taskInfo.data.baseConfig.type;
 
-  if (primitiveType) {
-    const sortingParams = getSortingParams(primitiveType);
+ // Минимально допустимый объект фильтра
+ const defaultFilter = {
+  withoutKeys: false,
+  filterString: '',
+  pagination: { limit: 10, offset: 0 },
+  orderDirection: OrderDirection.ASC,
+};
 
-    const { data } = useQuery<GetMainTaskDeps>(GET_MAIN_TASK_DEPS, {
-      variables: {
-        taskID,
-        filter: {
-          withoutKeys: false,
-          filterString: '',
-          pagination: { limit: 10, offset: 0 },
-          ...sortingParams,
-          orderDirection: OrderDirection.ASC,
-        },
-      },
-    });
-
-    setDefaultData(data);
+// Второй запрос для получения зависимостей задачи (MainTaskDeps)
+const { data: mainTaskDepsData, loading: depsLoading, error: depsError } = useQuery<GetMainTaskDeps, GetMainTaskDepsVariables>(
+  GET_MAIN_TASK_DEPS,
+  {
+    variables: {
+      taskID,
+      filter: primitiveType
+        ? {
+            ...defaultFilter,
+            ...getSortingParams(primitiveType), // Параметры сортировки
+          }
+        : defaultFilter, // Если primitiveType не определён, передаем минимальный фильтр
+    },
+    skip: !taskID, // Пропускаем запрос, если taskID ещё нет
   }
+);
+  // Используем useEffect для обновления defaultDataAtom, если данные mainTaskDepsData изменяются
+  useEffect(() => {
+    if (mainTaskDepsData) {
+      setDefaultData(mainTaskDepsData);
+    }
+  }, [mainTaskDepsData, setDefaultData]);
 
 
   return {
