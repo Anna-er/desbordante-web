@@ -1,4 +1,4 @@
-import { TaskContextProvider } from '@components/TaskContext';
+import _404 from '../../404';
 import { ReportsLayout } from '@components/ReportsLayout/ReportsLayout';
 import { useReportsRouter } from '@components/useReportsRouter';
 import { useQuery } from '@apollo/client';
@@ -22,22 +22,22 @@ export default function Page() {
 
   const primitiveType = taskInfo?.taskInfo.data.baseConfig.type;
   if (!primitiveType) {
-    return null;
+    return _404;
   }
 
   const tabsConfig = reportsConfig[primitiveType]?.tabs;
   if (!tabsConfig || tabsConfig.length === 0) {
-    return null;
+    return _404;
   }
 
   const selectedTab = tabsConfig.find(tab => currentTab === tab.pathName) || tabsConfig[0];
   if (!selectedTab) {
-    return null;
+    return _404;
   }
 
   const SelectedTabComponent = selectedTab.component;
   if (!SelectedTabComponent) {
-    return null;
+    return _404;
   }
 
   return (
