@@ -16,8 +16,6 @@ const StatisticsComponent = dynamic(() => import('../../../primitives/FD/tabs/me
 
 import { TabConfig } from '../../reportsConfig';
 
-import React from 'react';
-
 const menuStatistics: TabConfig = {
   pathName: 'charts',
   label: 'Statistics',
@@ -25,7 +23,7 @@ const menuStatistics: TabConfig = {
   component: StatisticsComponent,
 };
 const menuInstanceList: TabConfig = {
-  pathName: 'dependencies',
+  pathName: 'list',
   label: 'Instance list',
   icon: <DropDownIcon />,
   component: InstanceListComponent,

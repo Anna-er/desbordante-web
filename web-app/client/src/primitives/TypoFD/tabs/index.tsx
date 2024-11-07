@@ -16,8 +16,6 @@ const ClustersComponent = dynamic(() => import('../../TypoFD/tabs/menuClusters')
 
 import { TabConfig } from '../../reportsConfig';
 
-import React from 'react';
-
 const menuClusters: TabConfig = {
   pathName: 'clusters',
   label: 'Clusters',
@@ -25,7 +23,7 @@ const menuClusters: TabConfig = {
   component: ClustersComponent,
 };
 const menuInstanceList: TabConfig = {
-  pathName: 'dependencies',
+  pathName: 'list',
   label: 'Instance list',
   icon: <DropDownIcon />,
   component: InstanceListComponent,

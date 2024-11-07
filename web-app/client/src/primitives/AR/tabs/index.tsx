@@ -13,7 +13,7 @@ const InstanceListComponent = dynamic(() => import('../../common/menuInstanceLis
 
 
 const menuInstanceList: TabConfig = {
-  pathName: 'dependencies',
+  pathName: 'list',
   label: 'Instance list',
   icon: <DropDownIcon />,
   component: InstanceListComponent,
