@@ -50,25 +50,22 @@ export const useTaskID = () => {
   const [prevTaskID, setPrevTaskID] = useAtom(prevTaskIDAtom);
   const [taskIDChanged, setTaskIDChanged] = useAtom(taskIDChangedAtom);
 
-  useEffect(() => {
-    if (routerTaskID && routerTaskID !== taskID) {
-      setTaskID(routerTaskID);
-    }
-  }, [routerTaskID, taskID, setTaskID]);
+  setTaskIDChanged(taskID != routerTaskID);
 
   useEffect(() => {
     setTaskIDChanged(taskID !== prevTaskID);
-  }, [taskID]);
-
-  useEffect(() => {
-    if (!prevTaskID) {
-      setPrevTaskID(taskID);
+    console.log("routerTaskID:", routerTaskID,"TaskID:", taskID, "taskIDChanged:",taskIDChanged);
+    if (routerTaskID && routerTaskID !== taskID) {
+      setPrevTaskID(taskID)
+      setTaskIDChanged(true);
+      setTaskID(routerTaskID);
     }
-    if (taskIDChanged) {
-      setPrevTaskID(taskID);
-    }
-  }, [taskID]);
+  }, [routerTaskID, setTaskID, taskID]);
+  
 
+
+
+  console.log("ID:", taskID, prevTaskID, taskIDChanged);
   return {taskID, taskIDChanged};
 };
 
@@ -178,6 +175,10 @@ export const useFDDatasetSnippet = () => {
     },
     skip: !taskID || (!taskIDChanged && !shouldFetch),
   });
+  console.log("taskIDChanged:", taskIDChanged);
+  console.log("shouldFetch:", shouldFetch);
+  console.log("FETCH:", taskIDChanged && shouldFetch);
+  console.log("SKIP", !taskID || (!taskIDChanged && !shouldFetch));
 
   useEffect(() => {
     if (data) setDataset(data);
