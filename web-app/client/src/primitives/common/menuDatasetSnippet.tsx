@@ -10,7 +10,7 @@ const LIMIT_INCREMENT = 30;
 
 const ReportsSnippet: NextPageWithLayout = () => {
 
-  const { taskID, selectedDependency, dataset } = useFDDatasetSnippet();
+  const { selectedDependency, dataset } = useFDDatasetSnippet();
 
   const paginationLimit = useRef(DEFAULT_LIMIT);
 

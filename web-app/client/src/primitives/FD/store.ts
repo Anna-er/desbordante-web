@@ -1,6 +1,6 @@
 import { atom, useAtom } from 'jotai';
 import { useQuery, useMutation } from '@apollo/client';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { GET_TASK_INFO } from '@graphql/operations/queries/getTaskInfo';
 import { getTaskInfo, getTaskInfoVariables } from '@graphql/operations/queries/__generated__/getTaskInfo';
 import { CREATE_SPECIFIC_TASK } from '@graphql/operations/mutations/createSpecificTask';
@@ -41,21 +41,7 @@ export const pieChartDataAtom = atom<getPieChartData | undefined>(undefined);
 export const pieChartLoadingAtom = atom<boolean | undefined>(undefined);
 export const prevTaskIDAtom = atom<string | null>(null);
 export const taskIDChangedAtom = atom<boolean>(false);
-
-// TaskInfo Atom (проблема с дублированием запросов)
-export const taskInfoAtom = atom(() => {
-  const {taskID, taskIDChanged} = useTaskID();
-  if (!taskID) return null;
-
-  if (!(!taskID || !taskIDChanged)) console.log(' FETCH TASK INFO ');
-
-  const { data } = useQuery<getTaskInfo, getTaskInfoVariables>(GET_TASK_INFO, {
-    variables: { taskID },
-    skip: !taskID || !taskIDChanged,
-  });
-
-  return data ? data.taskInfo : null;
-});
+export const taskInfoAtom = atom<getTaskInfo | undefined>(undefined);
 
 
 export const useTaskID = () => {
@@ -108,7 +94,6 @@ export const useFDStatistics = () => {
   }, [loading, setPieChartLoading]);
 
   return {
-    taskID,
     dependenciesFilter,
     setDependenciesFilter,
     pieChartData,
@@ -120,14 +105,19 @@ export const useFDPrimitiveList = () => {
   const {taskID, taskIDChanged} = useTaskID();
   const [defaultData, setDefaultData] = useAtom(defaultDataAtom);
   const [dependenciesFilter, setDependenciesFilter] = useAtom(dependenciesFilterAtom);
+  const [taskInfo, setTaskInfo] = useAtom(taskInfoAtom);
 
-  const { data: taskInfo, loading: taskInfoLoading, error: taskInfoError } = useQuery<getTaskInfo, getTaskInfoVariables>(
+  const { data, loading: taskInfoLoading, error: taskInfoError } = useQuery<getTaskInfo, getTaskInfoVariables>(
     GET_TASK_INFO,
     {
       variables: { taskID },
-      skip: !taskID
+      skip: !taskID || (!taskIDChanged && (taskInfo !== undefined)),
     },
   );
+
+  useEffect(() => {
+    if (data) setTaskInfo(data);
+  }, [data]);
 
   const primitiveType = PrimitiveType.FD;
 
@@ -194,12 +184,12 @@ export const useFDDatasetSnippet = () => {
   }, [data, setDataset]);
 
   return {
-    taskID,
     selectedDependency,
     dataset,
   };
 };
 
+// TODO: переместить в common store
 export const useDependencyList = () => {
   const {taskID, taskIDChanged} = useTaskID();
   const [dependenciesFilter, setDependenciesFilter] = useAtom(dependenciesFilterAtom);

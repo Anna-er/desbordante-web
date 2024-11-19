@@ -23,7 +23,7 @@ const getChartData = (data?: getPieChartData) => {
 };
 
 const ReportsCharts: NextPageWithLayout = () => {
-  const { taskID, dependenciesFilter, setDependenciesFilter, pieChartData: data, pieChartLoading: loading } =
+  const { dependenciesFilter, setDependenciesFilter, pieChartData: data, pieChartLoading: loading } =
   useFDStatistics();
 
   const { lhs, rhs } = getChartData(data);
