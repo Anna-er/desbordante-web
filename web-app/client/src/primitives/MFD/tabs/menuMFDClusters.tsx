@@ -3,10 +3,6 @@ import { useReportsRouter } from '@components/useReportsRouter';
 import React, {
   FC,
   ReactNode,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
 } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -14,142 +10,40 @@ import EyeIcon from '@assets/icons/eye.svg?component';
 import ArrowCrossed from '@assets/icons/line-arrow-right-crossed.svg?component';
 import Arrow from '@assets/icons/line-arrow-right.svg?component';
 import OrderingIcon from '@assets/icons/ordering.svg?component';
-import { MFDHighlight } from '@atoms/MFDTaskAtom';
 import Button from '@components/Button';
 
 import { ControlledSelect } from '@components/Inputs/Select';
 import ListPropertiesModal from '@components/ListPropertiesModal';
 import Pagination from '@components/Pagination/Pagination';
 
-import { ScrollDirection } from '@components/ScrollableNodeTable';
 import { MFDTable } from '@components/ScrollableNodeTable/implementations/MFDTable';
-import useMFDHighlight from '@hooks/useMFDHighlight';
-import useMFDTask from '@hooks/useMFDTask';
 import styles from '@styles/MetricDependencies.module.scss';
 
 import { MFDOrderingParameter, OrderDirection } from 'types/globalTypes';
 
 import { NextPageWithLayout } from 'types/pageWithLayout';
-
-type InsertedRow =
-  | {
-    position: number;
-    data: MFDHighlight;
-  }
-  | undefined;
+import { useMenuMFDClusters } from '../hooks/useMenuMFDClusters';
 
 const ReportsMFD: NextPageWithLayout = () => {
-  const defaultLimit = 150;
-  const defaultOffsetDifference = 50;
 
-  const { taskID, currentTab, switchTab } = useReportsRouter();
+  const { taskID } = useReportsRouter();
 
-  const shouldIgnoreScrollEvent = useRef(false);
-
-  // TODO: move parameters in one object
-  const [clusterIndex, setClusterIndex] = useState(0);
-  const [limit, setLimit] = useState(defaultLimit);
-  const [parameter, setOrderingParameter] = useState(
-    MFDOrderingParameter.MAXIMUM_DISTANCE,
-  );
-  const [orderDirection, setOrderDirection] = useState(OrderDirection.ASC);
-
-  const { data, loading, error } = useMFDTask(
-    taskID,
+  const {
+    data,
     clusterIndex,
-    limit,
-    parameter,
+    setClusterIndex,
+    isOrderingShown,
+    setIsOrderingShown,
+    showFullValue,
+    setShowFullValue,
+    setOrderingParameter,
     orderDirection,
-  );
-
-  useEffect(() => {
-    if (!loading && !error && data) {
-      shouldIgnoreScrollEvent.current = false;
-    }
-  }, [data, error, loading, limit]);
-
-  const [isOrderingShown, setIsOrderingShown] = useState(false);
-  const [showFullValue, setShowFullValue] = useState(false);
-
-  const [isInserted, setIsInserted] = useState(false);
-  const [furthestIndex, setFurthestIndex] = useState(0);
-  const [RowIndex, setRowIndex] = useState(0);
-  const [furthestData, setFurthestData] = useState(undefined as InsertedRow);
-
-  const [loadMFDHighlight, { data: highlightData }] = useMFDHighlight();
-
-  useEffect(() => {
-    if (isInserted) {
-      if (
-        highlightData &&
-        highlightData.taskInfo &&
-        highlightData.taskInfo.data.__typename === 'TaskWithDepsData' &&
-        highlightData.taskInfo.data.result &&
-        highlightData.taskInfo.data.result.__typename === 'MFDTaskResult'
-      ) {
-        const highlight =
-          highlightData.taskInfo.data.result.filteredDeps.deps[0];
-
-        setFurthestData({
-          position: RowIndex,
-          data: {
-            index: highlight.index,
-            rowIndex: highlightData.taskInfo.data.result.depsAmount + 1,
-            withinLimit: highlight.withinLimit,
-            maximumDistance: highlight.maximumDistance,
-            furthestPointIndex: highlight.furthestPointIndex,
-            value: highlight.value,
-            clusterValue: highlight.clusterValue,
-          },
-        });
-      } else {
-        setFurthestData(undefined);
-      }
-    } else {
-      setFurthestData(undefined);
-    }
-  }, [
-    isInserted,
-    highlightData,
-    RowIndex,
-    furthestIndex,
-    data.cluster.highlightsTotalCount,
-  ]);
-
-  const insertRow = useCallback(
-    (furthestIndex: number, rowIndex: number) => {
-      setFurthestIndex(furthestIndex);
-      setRowIndex(rowIndex);
-      setIsInserted(true);
-      void loadMFDHighlight({
-        variables: {
-          taskID,
-          clusterIndex,
-          rowFilter: `index=${furthestIndex}`,
-        },
-      });
-    },
-    [loadMFDHighlight, taskID, clusterIndex],
-  );
-
-  const closeInsertedRow = useCallback(() => {
-    setIsInserted(false);
-  }, []);
-
-  // TODO: move logic to the table component and make API for that
-  const onScroll = useCallback(
-    (direction: ScrollDirection) => {
-      if (!shouldIgnoreScrollEvent.current && direction === 'down') {
-        shouldIgnoreScrollEvent.current = true;
-        if (limit < data.cluster.highlightsTotalCount) {
-          setLimit((limit) => limit + defaultOffsetDifference);
-        } else {
-          shouldIgnoreScrollEvent.current = false;
-        }
-      }
-    },
-    [data.cluster.highlightsTotalCount, limit],
-  );
+    setOrderDirection,
+    furthestData,
+    insertRow,
+    closeInsertedRow,
+    onScroll,
+  } = useMenuMFDClusters(taskID);
 
   return (
     <>
