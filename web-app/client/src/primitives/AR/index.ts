@@ -1,0 +1,1 @@
+export { ARtabs } from './tabs';

@@ -61,7 +61,7 @@ describe('Loader Component', () => {
     });
     await waitFor(() => {
       expect(routerPushMock).toBeCalledWith({
-        pathname: 'reports/dependencies',
+        pathname: 'reports/list',
         query: { taskID: completedTaskIdMock },
       });
     });

@@ -1,0 +1,1 @@
+export { CFDtabs } from './tabs';

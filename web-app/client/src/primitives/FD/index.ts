@@ -1,0 +1,1 @@
+export { FDtabs } from './tabs';

@@ -55,6 +55,8 @@ import {
   Presets,
 } from 'types/form';
 import { IntersectionMainTaskProps } from 'types/globalTypes';
+import { PrimitiveType } from 'types/globalTypes';
+import reportsConfig from '../../primitives/reportsConfig';
 
 type FormFactoryProps<T extends UsedPrimitivesType> = {
   fileID: string;
@@ -252,27 +254,26 @@ const useFormFactory = <T extends UsedPrimitivesType>({
           forceCreate: true,
         },
       })
-        .then((resp) =>
-          router.push({
-            pathname: '/reports',
-            query: {
-              taskID: resp.data?.createMainTaskWithDatasetChoosing.taskID,
-            },
-          }),
-        )
-        .catch((error) => {
-          if (error instanceof Error) {
-            showError(
-              error.message,
-              'Internal error occurred. Please try later.',
-            );
-          }
+      .then((resp) => {
+        const taskID = resp.data?.createMainTaskWithDatasetChoosing.taskID;
+        const pathName = reportsConfig[primitive as unknown as PrimitiveType]?.tabs[0].pathName;
+        router.push({
+          pathname: `/reports/${taskID}/${pathName}`,
         });
-    },
-    () => {
-      showError('Input error', 'You need to correct the errors in the form.');
-    },
-  );
+      })
+      .catch((error) => {
+        if (error instanceof Error) {
+          showError(
+            error.message,
+            'Internal error occurred. Please try later.'
+          );
+        }
+      });
+  },
+  () => {
+    showError('Input error', 'You need to correct the errors in the form.');
+  }
+);
 
   const entries = formInputs.map(({ name, rules, render }) => (
     <Controller<typeof formDefaultValues>

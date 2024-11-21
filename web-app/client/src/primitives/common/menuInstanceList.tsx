@@ -1,6 +1,5 @@
-import { useLazyQuery } from '@apollo/client';
-import type { GetServerSideProps } from 'next';
-import { ReactElement, useEffect, useMemo, useState } from 'react';
+import { useLazyQuery, useQuery } from '@apollo/client';
+import { useEffect, useMemo, useState } from 'react';
 import { FormProvider } from 'react-hook-form';
 import EyeIcon from '@assets/icons/eye.svg?component';
 import FilterIcon from '@assets/icons/filter.svg?component';
@@ -10,22 +9,16 @@ import DependencyList from '@components/DependencyList/DependencyList';
 import DownloadResult from '@components/DownloadResult';
 import {
   FilteringWindow,
-  getSortingParams,
   OrderingWindow,
   useFilters,
 } from '@components/Filters';
 import { Text } from '@components/Inputs';
 import Pagination from '@components/Pagination/Pagination';
-import ReportsLayout from '@components/ReportsLayout';
-import { TaskContextProvider, useTaskContext } from '@components/TaskContext';
-import client from '@graphql/client';
 import {
   GetMainTaskDeps,
   GetMainTaskDepsVariables,
 } from '@graphql/operations/queries/__generated__/GetMainTaskDeps';
-import { getTaskInfo } from '@graphql/operations/queries/__generated__/getTaskInfo';
 import { GET_MAIN_TASK_DEPS } from '@graphql/operations/queries/getDeps';
-import { GET_TASK_INFO } from '@graphql/operations/queries/getTaskInfo';
 import styles from '@styles/Dependencies.module.scss';
 import { convertDependencies } from '@utils/convertDependencies';
 import {
@@ -34,20 +27,18 @@ import {
   PrimitiveType,
 } from 'types/globalTypes';
 import { NextPageWithLayout } from 'types/pageWithLayout';
+import { usePrimitiveList } from './hooks/usePrimitiveList';
 
-type Props = {
-  defaultData?: GetMainTaskDeps;
-};
-
-const ReportsDependencies: NextPageWithLayout<Props> = ({ defaultData }) => {
+const ReportsDependencies: NextPageWithLayout = () => {
   const {
     taskInfo,
     taskID,
+    defaultData,
     dependenciesFilter: {
       rhs: mustContainRhsColIndices,
       lhs: mustContainLhsColIndices,
     },
-  } = useTaskContext();
+  } = usePrimitiveList();
 
   const primitive: PrimitiveType | undefined =
     taskInfo?.taskInfo.data.baseConfig.type;
@@ -192,48 +183,6 @@ const ReportsDependencies: NextPageWithLayout<Props> = ({ defaultData }) => {
         />
       </div>
     </>
-  );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  if (context.query.taskID) {
-    const { data } = await client.query<getTaskInfo>({
-      query: GET_TASK_INFO,
-      variables: { taskID: context.query.taskID },
-    });
-
-    const sortingParams = getSortingParams(data.taskInfo.data.baseConfig.type);
-
-    const { data: taskDeps } = await client.query<GetMainTaskDeps>({
-      query: GET_MAIN_TASK_DEPS,
-      variables: {
-        taskID: context.query.taskID,
-        filter: {
-          withoutKeys: false,
-          filterString: '',
-          pagination: { limit: 10, offset: 0 },
-          ...sortingParams,
-          orderDirection: OrderDirection.ASC,
-        },
-      },
-    });
-    return {
-      props: {
-        defaultData: taskDeps,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};
-
-ReportsDependencies.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <TaskContextProvider>
-      <ReportsLayout>{page}</ReportsLayout>
-    </TaskContextProvider>
   );
 };
 

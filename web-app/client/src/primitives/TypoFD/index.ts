@@ -1,0 +1,1 @@
+export { TypoFDtabs } from './tabs';
