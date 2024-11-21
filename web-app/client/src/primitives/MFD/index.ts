@@ -1,1 +1,1 @@
-export {MFDtabs} from './tabs';
+export { MFDtabs } from './tabs';

@@ -1,9 +1,6 @@
 import _ from 'lodash';
 import { useReportsRouter } from '@components/useReportsRouter';
-import React, {
-  FC,
-  ReactNode,
-} from 'react';
+import React, { FC, ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 
 import EyeIcon from '@assets/icons/eye.svg?component';
@@ -25,7 +22,6 @@ import { NextPageWithLayout } from 'types/pageWithLayout';
 import { useMenuMFDClusters } from '../hooks/useMenuMFDClusters';
 
 const ReportsMFD: NextPageWithLayout = () => {
-
   const { taskID } = useReportsRouter();
 
   const {

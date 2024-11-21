@@ -10,9 +10,9 @@ import styles from '@styles/Clusters.module.scss';
 import { NextPageWithLayout } from 'types/pageWithLayout';
 import { useClusters } from '../hooks/useClusters';
 
-
 const ReportsClusters: NextPageWithLayout = () => {
-  const { selectedDependency, datasetHeader, specificTaskID, getCluster } = useClusters();
+  const { selectedDependency, datasetHeader, specificTaskID, getCluster } =
+    useClusters();
   const [page, setPage] = useState(1);
 
   const { data, totalCount, previousData, miningCompleted } =
@@ -88,6 +88,5 @@ const Loader: FC<LoaderProps> = ({ lhs, rhs }) => {
     </div>
   );
 };
-
 
 export default ReportsClusters;

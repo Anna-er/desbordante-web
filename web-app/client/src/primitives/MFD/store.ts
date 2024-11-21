@@ -1,4 +1,4 @@
-import {atom, useAtom} from 'jotai';
+import { atom, useAtom } from 'jotai';
 import { useState, useCallback, useEffect, useRef } from 'react';
 import useMFDTask from '@hooks/useMFDTask';
 import { MFDHighlight } from '@atoms/MFDTaskAtom';
@@ -9,9 +9,9 @@ const defaultLimit = 150;
 
 type InsertedRow =
   | {
-    position: number;
-    data: MFDHighlight;
-  }
+      position: number;
+      data: MFDHighlight;
+    }
   | undefined;
 
 export const clusterIndexAtom = atom(0);
@@ -24,4 +24,3 @@ export const rowIndexAtom = atom(0);
 export const furthestDataAtom = atom<InsertedRow | undefined>(undefined);
 export const isOrderingShownAtom = atom(false);
 export const showFullValueAtom = atom(false);
-

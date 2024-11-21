@@ -1,5 +1,8 @@
 import { atom, useAtom } from 'jotai';
-import { getTaskInfo, getTaskInfoVariables } from '@graphql/operations/queries/__generated__/getTaskInfo';
+import {
+  getTaskInfo,
+  getTaskInfoVariables,
+} from '@graphql/operations/queries/__generated__/getTaskInfo';
 import { GeneralColumn } from '@utils/convertDependencies';
 import {
   getPieChartData,
@@ -16,7 +19,10 @@ import {
 
 export const taskIDAtom = atom<string>('');
 export const defaultDataAtom = atom<GetMainTaskDeps | undefined>(undefined);
-export const dependenciesFilterAtom = atom<{ rhs: number[], lhs: number[] }>({ rhs: [], lhs: [] });
+export const dependenciesFilterAtom = atom<{ rhs: number[]; lhs: number[] }>({
+  rhs: [],
+  lhs: [],
+});
 export const selectedDependencyAtom = atom<GeneralColumn[]>([]);
 export const errorDependencyAtom = atom<GeneralColumn[]>([]);
 export const specificTaskIDAtom = atom<string | undefined>(undefined);

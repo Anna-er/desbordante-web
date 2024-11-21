@@ -1,1 +1,1 @@
-export {TypoFDtabs} from './tabs';
+export { TypoFDtabs } from './tabs';

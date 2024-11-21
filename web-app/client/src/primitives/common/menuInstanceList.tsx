@@ -21,10 +21,13 @@ import {
 import { GET_MAIN_TASK_DEPS } from '@graphql/operations/queries/getDeps';
 import styles from '@styles/Dependencies.module.scss';
 import { convertDependencies } from '@utils/convertDependencies';
-import { IntersectionFilter, OrderDirection, PrimitiveType } from 'types/globalTypes';
+import {
+  IntersectionFilter,
+  OrderDirection,
+  PrimitiveType,
+} from 'types/globalTypes';
 import { NextPageWithLayout } from 'types/pageWithLayout';
 import { usePrimitiveList } from './hooks/usePrimitiveList';
-
 
 const ReportsDependencies: NextPageWithLayout = () => {
   const {
@@ -36,8 +39,6 @@ const ReportsDependencies: NextPageWithLayout = () => {
       lhs: mustContainLhsColIndices,
     },
   } = usePrimitiveList();
-
-
 
   const primitive: PrimitiveType | undefined =
     taskInfo?.taskInfo.data.baseConfig.type;
@@ -56,7 +57,7 @@ const ReportsDependencies: NextPageWithLayout = () => {
   const filter = useMemo<IntersectionFilter>(() => {
     const sortingParams = {
       [(primitive === PrimitiveType.TypoFD ? PrimitiveType.FD : primitive) +
-        'OrderingParameter']: ordering,
+      'OrderingParameter']: ordering,
     };
 
     return {
@@ -184,6 +185,5 @@ const ReportsDependencies: NextPageWithLayout = () => {
     </>
   );
 };
-
 
 export default ReportsDependencies;

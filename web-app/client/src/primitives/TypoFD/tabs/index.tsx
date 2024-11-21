@@ -3,16 +3,24 @@ import DatatableIcon from '@assets/icons/datatable.svg?component';
 import DropDownIcon from '@assets/icons/list-dropdown.svg?component';
 import dynamic from 'next/dynamic';
 
-const DatasetSnippetComponent = dynamic(() => import('../../common/menuDatasetSnippet'), {
-  ssr: false,
-});
-const InstanceListComponent = dynamic(() => import('../../common/menuInstanceList'), {
-  ssr: false,
-});
-const ClustersComponent = dynamic(() => import('../../TypoFD/tabs/menuClusters'), {
-  ssr: false,
-});
-
+const DatasetSnippetComponent = dynamic(
+  () => import('../../common/menuDatasetSnippet'),
+  {
+    ssr: false,
+  },
+);
+const InstanceListComponent = dynamic(
+  () => import('../../common/menuInstanceList'),
+  {
+    ssr: false,
+  },
+);
+const ClustersComponent = dynamic(
+  () => import('../../TypoFD/tabs/menuClusters'),
+  {
+    ssr: false,
+  },
+);
 
 import { TabConfig } from '../../reportsConfig';
 
@@ -35,4 +43,8 @@ const menuDatasetSnippet: TabConfig = {
   component: DatasetSnippetComponent,
 };
 
-export const TypoFDtabs: TabConfig[] = [menuInstanceList, menuClusters, menuDatasetSnippet];
+export const TypoFDtabs: TabConfig[] = [
+  menuInstanceList,
+  menuClusters,
+  menuDatasetSnippet,
+];

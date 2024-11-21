@@ -1,20 +1,19 @@
-import {useAtom} from 'jotai';
+import { useAtom } from 'jotai';
 import { useCallback, useEffect, useRef } from 'react';
 import useMFDTask from '@hooks/useMFDTask';
 import useMFDHighlight from '@hooks/useMFDHighlight';
 import {
-   clusterIndexAtom,
-   limitAtom,
-   parameterAtom,
-   orderDirectionAtom,
-   isInsertedAtom,
-   furthestIndexAtom,
-   rowIndexAtom,
-   furthestDataAtom,
-   isOrderingShownAtom,
-   showFullValueAtom,
+  clusterIndexAtom,
+  limitAtom,
+  parameterAtom,
+  orderDirectionAtom,
+  isInsertedAtom,
+  furthestIndexAtom,
+  rowIndexAtom,
+  furthestDataAtom,
+  isOrderingShownAtom,
+  showFullValueAtom,
 } from '../store';
-
 
 export const useMenuMFDClusters = (taskID: string) => {
   const defaultOffsetDifference = 50;
@@ -32,7 +31,13 @@ export const useMenuMFDClusters = (taskID: string) => {
 
   const shouldIgnoreScrollEvent = useRef(false);
 
-  const { data, loading, error } = useMFDTask(taskID, clusterIndex, limit, parameter, orderDirection);
+  const { data, loading, error } = useMFDTask(
+    taskID,
+    clusterIndex,
+    limit,
+    parameter,
+    orderDirection,
+  );
 
   const [loadMFDHighlight, { data: highlightData }] = useMFDHighlight();
 
@@ -51,7 +56,8 @@ export const useMenuMFDClusters = (taskID: string) => {
         highlightData.taskInfo.data.result &&
         highlightData.taskInfo.data.result.__typename === 'MFDTaskResult'
       ) {
-        const highlight = highlightData.taskInfo.data.result.filteredDeps.deps[0];
+        const highlight =
+          highlightData.taskInfo.data.result.filteredDeps.deps[0];
 
         setFurthestData({
           position: rowIndex,
@@ -86,7 +92,7 @@ export const useMenuMFDClusters = (taskID: string) => {
         },
       });
     },
-    [loadMFDHighlight, taskID, clusterIndex]
+    [loadMFDHighlight, taskID, clusterIndex],
   );
 
   const closeInsertedRow = useCallback(() => {
@@ -105,7 +111,7 @@ export const useMenuMFDClusters = (taskID: string) => {
         }
       }
     },
-    [data?.cluster.highlightsTotalCount, limit]
+    [data?.cluster.highlightsTotalCount, limit],
   );
 
   return {

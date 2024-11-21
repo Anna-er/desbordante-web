@@ -1,1 +1,1 @@
-export {FDtabs} from './tabs';
+export { FDtabs } from './tabs';

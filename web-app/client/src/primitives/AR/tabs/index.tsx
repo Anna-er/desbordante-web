@@ -4,13 +4,18 @@ import DropDownIcon from '@assets/icons/list-dropdown.svg?component';
 import dynamic from 'next/dynamic';
 import { TabConfig } from '../../reportsConfig';
 
-const DatasetSnippetComponent = dynamic(() => import('../../common/menuDatasetSnippet'), {
-  ssr: false,
-});
-const InstanceListComponent = dynamic(() => import('../../common/menuInstanceList'), {
-  ssr: false,
-});
-
+const DatasetSnippetComponent = dynamic(
+  () => import('../../common/menuDatasetSnippet'),
+  {
+    ssr: false,
+  },
+);
+const InstanceListComponent = dynamic(
+  () => import('../../common/menuInstanceList'),
+  {
+    ssr: false,
+  },
+);
 
 const menuInstanceList: TabConfig = {
   pathName: 'list',

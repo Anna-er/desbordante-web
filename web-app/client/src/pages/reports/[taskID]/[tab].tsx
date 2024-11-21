@@ -17,7 +17,7 @@ export default function Page() {
     GET_TASK_INFO,
     {
       variables: { taskID },
-    }
+    },
   );
 
   const primitiveType = taskInfo?.taskInfo.data.baseConfig.type;
@@ -30,7 +30,8 @@ export default function Page() {
     return _404;
   }
 
-  const selectedTab = tabsConfig.find(tab => currentTab === tab.pathName) || tabsConfig[0];
+  const selectedTab =
+    tabsConfig.find((tab) => currentTab === tab.pathName) || tabsConfig[0];
   if (!selectedTab) {
     return _404;
   }
@@ -41,8 +42,8 @@ export default function Page() {
   }
 
   return (
-      <ReportsLayout pageClass={styles.page} containerClass={styles.container}>
-        <SelectedTabComponent />
-      </ReportsLayout>
+    <ReportsLayout pageClass={styles.page} containerClass={styles.container}>
+      <SelectedTabComponent />
+    </ReportsLayout>
   );
 }

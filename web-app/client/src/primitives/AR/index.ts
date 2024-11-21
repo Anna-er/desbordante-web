@@ -1,1 +1,1 @@
-export {ARtabs} from './tabs';
+export { ARtabs } from './tabs';

@@ -15,23 +15,29 @@ import { GeneralColumn } from '@utils/convertDependencies';
 import { useTaskID } from '../../common/hooks/useTaskID';
 import { PrimitiveType, SpecificTaskType } from 'types/globalTypes';
 import { getClustersPreview } from '@graphql/operations/queries/EDP/__generated__/getClustersPreview';
-import {selectedDependencyAtom, specificTaskIDAtom, datasetHeaderAtom} from '../store';
-
-
-
+import {
+  selectedDependencyAtom,
+  specificTaskIDAtom,
+  datasetHeaderAtom,
+} from '../store';
 
 export const useClusters = () => {
-  const [selectedDependency, setSelectedDependency] = useAtom(selectedDependencyAtom);
+  const [selectedDependency, setSelectedDependency] = useAtom(
+    selectedDependencyAtom,
+  );
   const [specificTaskID, setSpecificTaskID] = useAtom(specificTaskIDAtom);
   const [datasetHeader, setDatasetHeader] = useAtom(datasetHeaderAtom);
 
   const { taskID } = useTaskID(); // Assuming taskID is managed externally
 
   // Fetch dataset info
-  const { data: datasetInfo } = useQuery<getDataset, getDatasetVariables>(GET_DATASET, {
-    variables: { taskID, pagination: { offset: 0, limit: 1 } },
-    skip: !taskID,
-  });
+  const { data: datasetInfo } = useQuery<getDataset, getDatasetVariables>(
+    GET_DATASET,
+    {
+      variables: { taskID, pagination: { offset: 0, limit: 1 } },
+      skip: !taskID,
+    },
+  );
 
   // Update dataset header
   useEffect(() => {
@@ -40,9 +46,10 @@ export const useClusters = () => {
     }
   }, [datasetInfo, setDatasetHeader]);
 
-  const [createSpecificTask] = useMutation<createSpecificTask, createSpecificTaskVariables>(
-    CREATE_SPECIFIC_TASK
-  );
+  const [createSpecificTask] = useMutation<
+    createSpecificTask,
+    createSpecificTaskVariables
+  >(CREATE_SPECIFIC_TASK);
 
   const getCluster = (response?: getClustersPreview) => {
     if (

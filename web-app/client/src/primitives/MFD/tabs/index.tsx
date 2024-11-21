@@ -5,14 +5,16 @@ import DatatableIcon from '@assets/icons/datatable.svg?component';
 import DropDownIcon from '@assets/icons/list-dropdown.svg?component';
 import dynamic from 'next/dynamic';
 
-const MFDClustersComponent = dynamic(() => import('../../MFD/tabs/menuMFDClusters'), {
-  ssr: false,
-});
+const MFDClustersComponent = dynamic(
+  () => import('../../MFD/tabs/menuMFDClusters'),
+  {
+    ssr: false,
+  },
+);
 
 import { TabConfig } from '../../reportsConfig';
 
 import React, { FC } from 'react';
-
 
 const menuMFDClusters: TabConfig = {
   pathName: 'clusters',
@@ -20,6 +22,5 @@ const menuMFDClusters: TabConfig = {
   icon: <ClusterIcon />,
   component: MFDClustersComponent,
 };
-
 
 export const MFDtabs: TabConfig[] = [menuMFDClusters];

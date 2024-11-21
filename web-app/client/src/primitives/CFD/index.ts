@@ -1,1 +1,1 @@
-export {CFDtabs} from './tabs';
+export { CFDtabs } from './tabs';

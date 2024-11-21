@@ -1,8 +1,6 @@
 import LayeredChart from '@components/Chart/LayeredChart';
 import { useFDStatistics } from '../hooks/useFDStatistics';
-import {
-  getPieChartData,
-} from '@graphql/operations/queries/__generated__/getPieChartData';
+import { getPieChartData } from '@graphql/operations/queries/__generated__/getPieChartData';
 import styles from '@styles/Charts.module.scss';
 import { NextPageWithLayout } from 'types/pageWithLayout';
 
@@ -20,8 +18,12 @@ const getChartData = (data?: getPieChartData) => {
 };
 
 const ReportsCharts: NextPageWithLayout = () => {
-  const { dependenciesFilter, setDependenciesFilter, pieChartData: data, pieChartLoading: loading } =
-  useFDStatistics();
+  const {
+    dependenciesFilter,
+    setDependenciesFilter,
+    pieChartData: data,
+    pieChartLoading: loading,
+  } = useFDStatistics();
 
   const { lhs, rhs } = getChartData(data);
 
@@ -31,14 +33,14 @@ const ReportsCharts: NextPageWithLayout = () => {
       {loading == false && (
         <>
           <LayeredChart
-          title="Left-hand side"
-          attributes={lhs}
-          {...{
-            selectedAttributeIndices: dependenciesFilter.lhs,
-            setSelectedAttributeIndices: (lhs) =>
-              setDependenciesFilter(({ rhs }) => ({ rhs, lhs })),
-          }}
-        />
+            title="Left-hand side"
+            attributes={lhs}
+            {...{
+              selectedAttributeIndices: dependenciesFilter.lhs,
+              setSelectedAttributeIndices: (lhs) =>
+                setDependenciesFilter(({ rhs }) => ({ rhs, lhs })),
+            }}
+          />
           <LayeredChart
             title="Right-hand side"
             attributes={rhs}
@@ -50,7 +52,6 @@ const ReportsCharts: NextPageWithLayout = () => {
           />
         </>
       )}
-    
     </div>
   );
 };
