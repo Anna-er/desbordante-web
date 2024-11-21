@@ -23,7 +23,7 @@ import styles from '@styles/Dependencies.module.scss';
 import { convertDependencies } from '@utils/convertDependencies';
 import { IntersectionFilter, OrderDirection, PrimitiveType } from 'types/globalTypes';
 import { NextPageWithLayout } from 'types/pageWithLayout';
-import { useFDPrimitiveList } from '../FD/store';
+import { usePrimitiveList } from './hooks/usePrimitiveList';
 
 
 const ReportsDependencies: NextPageWithLayout = () => {
@@ -35,7 +35,7 @@ const ReportsDependencies: NextPageWithLayout = () => {
       rhs: mustContainRhsColIndices,
       lhs: mustContainLhsColIndices,
     },
-  } = useFDPrimitiveList();
+  } = usePrimitiveList();
 
 
 

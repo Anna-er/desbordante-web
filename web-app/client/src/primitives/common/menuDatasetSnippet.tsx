@@ -1,6 +1,6 @@
 import { useMemo, useRef } from 'react';
 import ScrollableTable from '@components/ScrollableTable';
-import { useFDDatasetSnippet } from '../FD/store';
+import { useDatasetSnippet } from './hooks/useDatasetSnippet';
 import styles from '@styles/Snippet.module.scss';
 import { NextPageWithLayout } from 'types/pageWithLayout';
 
@@ -10,7 +10,7 @@ const LIMIT_INCREMENT = 30;
 
 const ReportsSnippet: NextPageWithLayout = () => {
 
-  const { selectedDependency, dataset } = useFDDatasetSnippet();
+  const { selectedDependency, dataset } = useDatasetSnippet();
 
   const paginationLimit = useRef(DEFAULT_LIMIT);
 

@@ -1,11 +1,8 @@
-import { useQuery } from '@apollo/client';
 import LayeredChart from '@components/Chart/LayeredChart';
-import { useFDStatistics } from '../store';
+import { useFDStatistics } from '../hooks/useFDStatistics';
 import {
   getPieChartData,
-  getPieChartDataVariables,
 } from '@graphql/operations/queries/__generated__/getPieChartData';
-import { GET_PIE_CHART_DATA } from '@graphql/operations/queries/getPieChartData';
 import styles from '@styles/Charts.module.scss';
 import { NextPageWithLayout } from 'types/pageWithLayout';
 

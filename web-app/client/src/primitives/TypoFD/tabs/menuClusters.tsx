@@ -3,27 +3,16 @@ import { FC, useState } from 'react';
 import longArrowIcon from '@assets/icons/long-arrow.svg';
 import Pagination from '@components/Pagination/Pagination';
 import ClusterTable from '@components/ScrollableTable/ClusterTable';
-import { useTaskContext } from '@components/TaskContext';
 import Tooltip from '@components/Tooltip';
 import { getClustersPreview } from '@graphql/operations/queries/EDP/__generated__/getClustersPreview';
 import useClustersPreview from '@hooks/useClustersPreview';
 import styles from '@styles/Clusters.module.scss';
 import { NextPageWithLayout } from 'types/pageWithLayout';
+import { useClusters } from '../hooks/useClusters';
 
-const getCluster = (response?: getClustersPreview) => {
-  if (
-    response &&
-    'result' in response?.taskInfo.data &&
-    response?.taskInfo?.data?.result
-  ) {
-    return response?.taskInfo.data.result.typoClusters[0];
-  }
-  return undefined;
-};
 
 const ReportsClusters: NextPageWithLayout = () => {
-  const { selectedDependency, datasetHeader, specificTaskID } =
-    useTaskContext();
+  const { selectedDependency, datasetHeader, specificTaskID, getCluster } = useClusters();
   const [page, setPage] = useState(1);
 
   const { data, totalCount, previousData, miningCompleted } =
