@@ -5,9 +5,9 @@ export const useReportsRouter = () => {
 
   const taskID = router.query.taskID as string;
   const currentTab = router.query.tab as string;
-  // if (!taskID && !currentTab) {
-  //   throw new Error('useReportsRouter must be used within a page where taskID and tab query parameters are available.');
-  // }
+  if (!taskID && !currentTab) {
+    throw new Error('useReportsRouter must be used within a page where taskID and tab query parameters are available.');
+  }
 
   const switchTab = (tab: string) => {
     router.push({
